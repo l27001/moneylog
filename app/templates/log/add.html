@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Добавить запись</h1>
+<form action="" method="post" name="log_add">
+    {{form.hidden_tag()}}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="messages">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <p>
+        Сумма: {% if form.cost.errors[0] %}<br><span class="error">{{ form.cost.errors[0] }}</span>{% endif %}<br>
+        {{form.cost()}}<br>
+    </p>
+    <p>
+        Пояснение: {% if form.description.errors[0] %}<br><span class="error">{{ form.description.errors[0] }}</span>{% endif %}<br>
+        {{form.description()}}<br>
+    </p>
+    <p>
+        Группа: {% if form.group.errors[0] %}<br><span class="error">{{ form.group.errors[0] }}</span>{% endif %}<br>
+        {{form.group()}}<br>
+    </p>
+    <p><input type="submit" value="Добавить"></p>
+</form> 
+{% endblock %} 
+ 

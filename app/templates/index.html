@@ -1,4 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Hello. Your name is {{user.username}}</h1> 
+<h1>{% if user.is_authenticated == 1 %}Добро пожаловать {{user.username}}{% else %}Вы не авторизованы{% endif %}</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="messages">
+        {% for category, message in messages %}
+        	<li class="{{ category }}">{{ message }}</li>
+    	{% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+<a href="{{ url_for('log_add') }}">Добавить запись</a>
+{% if logs %}
+<table border="1">
+	<tr>
+		<th>Дата</th>
+		<th>Группа</th>
+		<th width="300px">Пояснение</th>
+		<th>Сумма</th>
+	</tr>
+	{% for item in logs %}
+	<tr><td>{{ item.timestamp }}</td><td title="{{ groups[item.group_id][1] }}">{{ groups[item.group_id][0] }}</td><td>{{ item.description }}</td><td class="{% if item.cost < 0 %}error{% else %}success{% endif %}">{{ item.cost }}</td><td><a href="{{ url_for('log_del', id_ = item.id) }}">Удалить</a></td></tr>
+	{% endfor %}
+	{% else %}
+	<h3>Тут ещё ничего нет</h3>
+	{% endif %}
+</table>
 {% endblock %}

@@ -3,8 +3,20 @@
 <head>
 	<meta charset="utf-8">
 	<title>{{ title }}</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 <body>
+	<ul class="head">
+		{% if user.is_authenticated == 0 %}
+		<li><a href="{{ url_for('auth') }}">Auth</a></li>
+		<li><a href="{{ url_for('register') }}">Register</a></li>
+		{% endif %}
+		<li><a href="{{ url_for('index') }}">Index</a></li>
+		{% if user.is_authenticated == 1 %}
+		<li><a href="{{ url_for('logout') }}">Logout</a></li>
+		{% endif %}
+	</ul>
+	<hr>
 	{% block content %}{% endblock %}
 </body>
 </html> 

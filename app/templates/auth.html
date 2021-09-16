@@ -1,17 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Sign in</h1>
+<h1>Вход</h1>
 <form action="" method="post" name="auth">
     {{form.hidden_tag()}}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="messages">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
     <p>
-        Username:<br>
+        Логин: {% if form.username.errors[0] %}<br><span class="error">{{ form.username.errors[0] }}</span>{% endif %}<br>
         {{form.username()}}<br>
     </p>
     <p>
-        Password:<br>
+        Пароль: {% if form.password.errors[0] %}<br><span class="error">{{ form.password.errors[0] }}</span>{% endif %}<br>
         {{form.password()}}<br>
     </p>
-    <p>{{form.remember_me}} Remember Me</p>
-    <p><input type="submit" value="Sign in"></p>
+    <p>{{form.remember_me}} Запомнить меня</p>
+    <p><input type="submit" value="Войти"></p>
 </form> 
 {% endblock %} 

@@ -1,0 +1,22 @@
+ul.head li {
+	display: inline;
+	margin-right: 5px;
+	padding: 3px;
+}
+ul.head {
+	margin: 0;
+    padding: 4px;
+}
+
+ul.messages {
+	list-style-type: none;
+}
+.error {
+	font-weight: bold;
+	color: red;
+} 
+
+.success {
+	font-weight: bold;
+	color: green;
+}

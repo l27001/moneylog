@@ -1,18 +1,19 @@
 from app import db
 import bcrypt
+from sqlalchemy.sql import func
 
 ROLE_USER = 0
 ROLE_ADMIN = 2
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(64), index = True, unique = True)
-    password = db.Column(db.String(128), index = True)
+    username = db.Column(db.String(64), index = True, unique = True, nullable = False)
+    password = db.Column(db.String(128), index = True, nullable = False)
     email = db.Column(db.String(120), index = True, unique = True)
-    role = db.Column(db.SmallInteger, default = ROLE_USER)
+    role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
     is_active = 1
     is_authenticated = 1
-    is_annymous = 0
+    is_anonymous = 0
 
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -29,7 +30,7 @@ class User(db.Model):
 class Group(db.Model):
     id = db.Column(db.SmallInteger, primary_key = True)
     name = db.Column(db.String(128))
-    description = db.Column(db.String(128))
+    description = db.Column(db.String(128), nullable = False)
 
     def __repr__(self):
         return '<Group %r>' % (self.name)
@@ -39,8 +40,8 @@ class MoneyLog(db.Model):
     group_id = db.Column(db.SmallInteger, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     cost = db.Column(db.Integer, index = True)
-    timestamp = db.Column(db.DateTime, index = True)
-    description = db.Column(db.String(512))
+    timestamp = db.Column(db.Date(), index = True, default=func.now())
+    description = db.Column(db.String(128), default='', nullable = False)
 
     def __repr__(self):
-        return '<Log %r>' % (self.group) 
+        return '<Log %r>' % (self.id) 

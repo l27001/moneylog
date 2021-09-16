@@ -1,9 +1,35 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField
-from wtforms.validators import DataRequired
+from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField
+from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
 
 class LoginForm(Form):
-    username = StringField('username', validators = [DataRequired("Необходимо заполнить все поля")])
-    password = PasswordField('password', validators = [DataRequired("Необходимо заполнить все поля")])
-    remember_me = BooleanField('remember_me', default = False)
- 
+    username = StringField('username',
+        validators = [DataRequired("Необходимо заполнить все поля")])
+    password = PasswordField('password',
+        validators = [DataRequired("Необходимо заполнить все поля")])
+    remember_me = BooleanField('remember_me',
+        default = False)
+
+class RegisterForm(Form):
+    username = StringField('username',
+        validators = [DataRequired("Необходимо заполнить все поля"),
+            Length(4,32,"Логин должен содержать от 4 до 32 символов"),
+            Regexp("^[A-Za-z_\-0-9]+$",0,"Логин может содержать только латинские буквы, цифры и символы - и _")])
+    email = StringField('email',
+        validators = [DataRequired("Необходимо заполнить все поля"),
+            Email("Введён некорректный email")])
+    password = PasswordField('password',
+        validators = [DataRequired("Заполните все поля"),
+            Length(6,40,"Пароль должен содержать от 6 до 40 символов")])
+    password2 = PasswordField('password2',
+        validators = [DataRequired("Заполните все поля"),
+            EqualTo("password", "Пароли должны совпадать")])
+
+class LogAdd(Form):
+    cost = IntegerField('cost',
+        validators = [DataRequired("Необходимо заполнить все поля")])
+    description = TextField('description',
+        validators = [Length(0,128,"Максимальная длина пояснения 128 символов")])
+    group = SelectField('group',
+        coerce=int,
+        validators = [DataRequired("Необходимо заполнить все поля")])
