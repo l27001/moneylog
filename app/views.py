@@ -12,7 +12,7 @@ def unauthorized():
     if(request.method == "GET"):
         return redirect(url_for('auth'))
     else:
-        return {"status":"unauthorized", "desc":"Необходимо авторизоваться"}
+        return {"status":"unauthorized", "description":"Необходимо авторизоваться"}
 
 @lm.user_loader
 def load_user(user_id):
@@ -22,8 +22,7 @@ def load_user(user_id):
 def before_request():
     g.user = current_user
 
-@app.route('/')
-@app.route('/index')
+@app.route('/dashboard')
 # @login_required
 def index():
     if(g.user.is_authenticated):
@@ -36,7 +35,7 @@ def index():
         logs = None
         groups = None
     return render_template('index.html',
-        title = "Index page",
+        title = "Dashboard",
         user = g.user,
         logs = logs,
         groups = groups)
@@ -61,7 +60,7 @@ def auth():
         else:
             flash("Неверный логин или пароль", "error")
     return render_template('auth.html',
-        title = "Auth",
+        title = "Вход",
         form = form,
         user = g.user)
 
@@ -80,7 +79,7 @@ def register():
             login_user(load_user(user.id), remember=True)
             return redirect(url_for('index'))
     return render_template('register.html',
-        title = "Register",
+        title = "Регистрация",
         form = form,
         user = g.user)
 
@@ -95,15 +94,18 @@ def log_add():
             description = form.description.data,
             group_id = form.group.data,
             user_id = g.user.id)
+        g.user.balance += form.cost.data
+        if(g.user.balance < 0): g.user.balance = 0
         db.session.add(add)
         db.session.commit()
         flash("Запись успешно добавлена" ,"success")
         return redirect(url_for('index'))
     return render_template("log/add.html",
+        title = "Добавить запись",
         form = form,
         user = g.user)
 
-@app.route('/log/del/<int:id_>', methods=['GET', 'POST'])
+@app.route('/log/del/<int:id_>', methods=['GET'])
 @login_required
 def log_del(id_):
     d = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id, models.MoneyLog.id == id_).first_or_404()
@@ -111,3 +113,37 @@ def log_del(id_):
     db.session.commit()
     flash("Запись успешно удалена", "success")
     return redirect(url_for('index'))
+
+@app.route('/log/edit/<int:id_>', methods=['GET' ,'POST'])
+@login_required
+def log_edit(id_):
+    item = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id, models.MoneyLog.id == id_).first_or_404()
+    form = forms.LogAdd()
+    groups = [(n.id, n.name) for n in models.Group.query.all()]
+    form.group.choices = groups
+    if(form.validate_on_submit() == True):
+        item.group_id = form.group.data
+        item.cost = form.cost.data
+        item.description = form.description.data
+        db.session.commit()
+        flash("Запись успешно сохранена" ,"success")
+        return redirect(url_for('index'))
+    else:
+        form.group.data = item.group_id
+        form.cost.data = item.cost
+        form.description.data = item.description
+    return render_template("log/edit.html",
+        title = "Редактировать запись",
+        form = form,
+        user = g.user)
+
+@app.route('/profile/balance', methods=['POST'])
+@login_required
+def user_balance_edit():
+    balance = request.form.get('balance')
+    try: balance = int(balance)
+    except ValueError: abort(400)
+    if(balance is None): abort(400)
+    g.user.balance = balance
+    db.session.commit()
+    return {"status": "success"}, 200

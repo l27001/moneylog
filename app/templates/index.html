@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{% if user.is_authenticated == 1 %}Добро пожаловать {{user.username}}{% else %}Вы не авторизованы{% endif %}</h1>
+<h1>Главная</h1>
+<h2>{% if user.is_authenticated == 1 %}Добро пожаловать {{user.username}}, ваш баланс 
+	<a href="#" id="balance">{{user.balance}}</a>
+	<input id="input_balance" width="50px" hidden value="{{user.balance}}"></input>
+	 ₽{% else %}Вы не авторизованы{% endif %}</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <ul class="messages">
@@ -10,7 +14,7 @@
     </ul>
     {% endif %}
 {% endwith %}
-<a href="{{ url_for('log_add') }}">Добавить запись</a>
+<button onclick="location.href='{{ url_for('log_add') }}'">Добавить запись</button>
 {% if logs %}
 <table border="1">
 	<tr>
@@ -20,10 +24,41 @@
 		<th>Сумма</th>
 	</tr>
 	{% for item in logs %}
-	<tr><td>{{ item.timestamp }}</td><td title="{{ groups[item.group_id][1] }}">{{ groups[item.group_id][0] }}</td><td>{{ item.description }}</td><td class="{% if item.cost < 0 %}error{% else %}success{% endif %}">{{ item.cost }}</td><td><a href="{{ url_for('log_del', id_ = item.id) }}">Удалить</a></td></tr>
+	<tr><td>{{ item.timestamp }}</td><td title="{{ groups[item.group_id][1] }}">{{ groups[item.group_id][0] }}</td><td>{% if item.description %}{{ item.description }}{% else %}<i>Отсутствует</i>{% endif %}</td><td class="{% if item.cost < 0 %}error{% else %}success{% endif %}">{{ item.cost }} ₽</td><td><button onclick="location.href='{{ url_for('log_edit', id_ = item.id) }}'">Изменить</button></td><td><button onclick="location.href='{{ url_for('log_del', id_ = item.id) }}'">Удалить</button></td></tr>
 	{% endfor %}
 	{% else %}
 	<h3>Тут ещё ничего нет</h3>
 	{% endif %}
 </table>
+{% endblock %}
+{% block extrajs %}
+<script>
+	let bal = document.getElementById('balance');
+	let bal_input = document.getElementById('input_balance');
+	function input_hide() {
+		let balance = Number(bal_input.value);
+		if(bal.innerHTML != balance) {
+			$.ajax({
+		    	url: "{{url_for('user_balance_edit')}}",
+		    	dataType: "json",
+		    	async: true,
+		    	type: "POST",
+		    	data: {balance: balance}
+			});
+		}
+		if(typeof balance === "number") {
+			bal.innerHTML = balance;
+		}
+		bal.hidden = false;
+		bal_input.hidden = true;
+		bal_input.blur();
+	}
+	function input_show() {
+		bal.hidden = true;
+		bal_input.hidden = false;
+		bal_input.focus();
+		bal_input.addEventListener("blur", input_hide, once=true);
+	}
+	bal.addEventListener("click", input_show);
+</script>
 {% endblock %}

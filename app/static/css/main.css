@@ -20,3 +20,14 @@ ul.messages {
 	font-weight: bold;
 	color: green;
 }
+td {
+	text-align: center;
+	padding-right: 3px;
+	padding-left: 3px;
+}
+a#balance {
+	color: black;
+}
+input#input_balance {
+	width: 50px;
+}

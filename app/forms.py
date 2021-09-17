@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
+from wtforms.widgets import TextArea
 
 class LoginForm(Form):
     username = StringField('username',
@@ -27,9 +28,10 @@ class RegisterForm(Form):
 
 class LogAdd(Form):
     cost = IntegerField('cost',
-        validators = [DataRequired("Необходимо заполнить все поля")])
+        validators = [DataRequired("Некорректное значение")])
     description = TextField('description',
-        validators = [Length(0,128,"Максимальная длина пояснения 128 символов")])
+        validators = [Length(0,128,"Максимальная длина пояснения 128 символов")],
+        widget=TextArea())
     group = SelectField('group',
         coerce=int,
         validators = [DataRequired("Необходимо заполнить все поля")])

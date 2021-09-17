@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Добавить запись</h1>
-<form action="" method="post" name="log_add">
+<h1>Изменить запись</h1>
+<form action="" method="post" name="log_edit">
     {{form.hidden_tag()}}
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -24,7 +24,7 @@
         Группа: {% if form.group.errors[0] %}<br><span class="error">{{ form.group.errors[0] }}</span>{% endif %}<br>
         {{form.group()}}<br>
     </p>
-    <p><input type="submit" value="Добавить"></p>
+    <p><input type="submit" value="Сохранить"></p>
 </form> 
 {% endblock %} 
  

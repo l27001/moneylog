@@ -2,21 +2,24 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>{{ title }}</title>
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 <body>
 	<ul class="head">
 		{% if user.is_authenticated == 0 %}
-		<li><a href="{{ url_for('auth') }}">Auth</a></li>
-		<li><a href="{{ url_for('register') }}">Register</a></li>
+		<li><a href="{{ url_for('auth') }}">Вход</a></li>
+		<li><a href="{{ url_for('register') }}">Регистрация</a></li>
 		{% endif %}
-		<li><a href="{{ url_for('index') }}">Index</a></li>
+		<li><a href="{{ url_for('index') }}">Главная</a></li>
 		{% if user.is_authenticated == 1 %}
-		<li><a href="{{ url_for('logout') }}">Logout</a></li>
+		<li><a href="{{ url_for('logout') }}">Выход</a></li>
 		{% endif %}
 	</ul>
 	<hr>
 	{% block content %}{% endblock %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	{% block extrajs %}{% endblock %}
 </body>
 </html> 

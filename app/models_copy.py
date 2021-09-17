@@ -11,7 +11,6 @@ class User(db.Model):
     password = db.Column(db.String(128), index = True, nullable = False)
     email = db.Column(db.String(120), index = True, unique = True)
     role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
-    balance = db.Column(db.BigInteger, default = 0, nullable = False)
     is_active = 1
     is_authenticated = 1
     is_anonymous = 0
@@ -31,7 +30,7 @@ class User(db.Model):
 
 class Group(db.Model):
     id = db.Column(db.SmallInteger, primary_key = True)
-    name = db.Column(db.String(128), nullable = False)
+    name = db.Column(db.String(128))
     description = db.Column(db.String(128), nullable = False)
 
     def __repr__(self):
@@ -39,10 +38,10 @@ class Group(db.Model):
 
 class MoneyLog(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    group_id = db.Column(db.SmallInteger, index = True, nullable = False)
-    user_id = db.Column(db.Integer, index = True, nullable = False)
-    cost = db.Column(db.BigInteger, nullable = False)
-    timestamp = db.Column(db.Date(), index = True, default=func.now(), nullable = False)
+    group_id = db.Column(db.SmallInteger, db.ForeignKey('group.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    cost = db.Column(db.Integer, index = True)
+    timestamp = db.Column(db.Date(), index = True, default=func.now())
     description = db.Column(db.String(128), default='', nullable = False)
 
     def __repr__(self):
