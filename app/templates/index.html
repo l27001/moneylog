@@ -1,19 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Главная</h1>
-<h2>{% if user.is_authenticated == 1 %}Добро пожаловать {{user.username}}, ваш баланс 
+<h2>{% if user.is_authenticated == True %}Добро пожаловать {{user.username}}, ваш баланс 
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 ₽{% else %}Вы не авторизованы{% endif %}</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <ul class="messages">
-        {% for category, message in messages %}
-        	<li class="{{ category }}">{{ message }}</li>
-    	{% endfor %}
-    </ul>
-    {% endif %}
-{% endwith %}
 <button class="main" onclick="location.href='{{ url_for('log_add') }}'">Добавить запись</button>
 {% if logs %}
 <div class="index_table">

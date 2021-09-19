@@ -12,9 +12,9 @@ class User(db.Model):
     email = db.Column(db.String(120), index = True, unique = True)
     role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
     balance = db.Column(db.BigInteger, default = 0, nullable = False)
-    is_active = 1
-    is_authenticated = 1
-    is_anonymous = 0
+    is_active = True
+    is_authenticated = True
+    is_anonymous = False
 
     def __repr__(self):
         return '<User %r>' % (self.username)

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>{{ title }}</title>
+	<title>{% if title %}{{ title }} | {% endif %}Moneylog</title>
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.2/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
@@ -11,17 +11,28 @@
 	<head>
 		<ul class="head">
 			<h2 class="logo"><span style="color: green;">Money</span>Log</h2>
-			{% if user.is_authenticated == 0 %}
+			{% if user.is_authenticated == False %}
 			<li><a href="{{ url_for('auth') }}">Вход</a></li>
 			<li><a href="{{ url_for('register') }}">Регистрация</a></li>
 			{% endif %}
 			<li><a href="{{ url_for('index') }}">Главная</a></li>
-			{% if user.is_authenticated == 1 %}
+			{% if user.is_authenticated == True %}
 			<li><a href="{{ url_for('logout') }}">Выход</a></li>
 			{% endif %}
 		</ul>
 		<hr>
 	</head>
+	<h1>{% if title2 %}{{ title2 }}{% elif title %}{{ title }}{% else %}Заголовок{% endif %}</h1>
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	    {% if messages %}
+	    <p>Уведомления:</p>
+	    <ul class="messages">
+	        {% for category, message in messages %}
+	        	<li class="{{ category }}">{{ message }}</li>
+	    	{% endfor %}
+	    </ul>
+	    {% endif %}
+	{% endwith %}
 	{% block content %}{% endblock %}
 	<script src="/static/js/jquery-3.6.0.min.js"></script>
 	<script charset="utf8" src="https://cdn.datatables.net/1.11.2/js/jquery.dataTables.js"></script>

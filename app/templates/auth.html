@@ -1,17 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Вход</h1>
 <form action="" method="post" name="auth">
     {{form.hidden_tag()}}
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="messages">
-        {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
     <p>
         Логин: {% if form.username.errors[0] %}<br><span class="error">{{ form.username.errors[0] }}</span>{% endif %}<br>
         {{form.username()}}<br>

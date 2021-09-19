@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from app import app, forms, models, db
 from sqlalchemy import or_
 from datetime import datetime
+from app.decorators import login_not_required
 
 lm = LoginManager()
 lm.init_app(app)
@@ -11,6 +12,7 @@ lm.login_view = 'auth'
 @lm.unauthorized_handler
 def unauthorized():
     if(request.method == "GET"):
+        flash("Необходимо авторизоваться", "error")
         return redirect(url_for('auth'))
     else:
         return {"status":"unauthorized", "description":"Необходимо авторизоваться"}
@@ -25,7 +27,7 @@ def before_request():
 
 @app.route('/')
 @app.route('/dashboard')
-# @login_required
+@login_required
 def index():
     if(g.user.is_authenticated):
         logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
@@ -37,7 +39,7 @@ def index():
         logs = None
         groups = None
     return render_template('index.html',
-        title = "Dashboard",
+        title = "Главная",
         user = g.user,
         logs = logs,
         groups = groups)
@@ -47,11 +49,12 @@ def index():
 def logout():
     logout_user()
     flash("Вы успешно вышли", "success")
-    return redirect(url_for('index'))
+    return redirect(url_for('auth'))
 
 @app.route('/auth', methods=['GET', 'POST'])
+@login_not_required
 def auth():
-    if(g.user is not None and g.user.is_authenticated): return redirect(url_for('index'))
+#    if(g.user is not None and g.user.is_authenticated): return redirect(url_for('index'))
     form = forms.LoginForm()
     if(form.validate_on_submit() == True):
         cur_user = models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.username.data)).first()
@@ -67,8 +70,9 @@ def auth():
         user = g.user)
 
 @app.route('/register', methods=['GET', 'POST'])
+@login_not_required
 def register():
-    if(g.user is not None and g.user.is_authenticated): return redirect(url_for('index'))
+#    if(g.user is not None and g.user.is_authenticated): return redirect(url_for('index'))
     form = forms.RegisterForm()
     if(form.validate_on_submit() == True):
         if(models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.email.data)).first() is not None):

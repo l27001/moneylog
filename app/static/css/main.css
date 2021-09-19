@@ -1,9 +1,12 @@
 @font-face {
 	font-family: 'Roboto';
-	src: url("../fonts/Roboto-Black.ttf") format("truetype");
+	src: url("../font/Roboto.ttf") format("truetype");
+	src: url("../font/Roboto.woff") format("woff");
+	src: url("../font/Roboto.woff2") format("woff2");
+
 }
 body {
-	font-family: Roboto;
+	font-family: 'Roboto';
 	min-width: 640px;
 }
 ul.head li {
@@ -115,6 +118,7 @@ h2.logo {
 	color: gray;
 	display: inline;
 	margin-right: 5px;
+	font-weight: bold;
 }
 @media screen and (max-width: 640px) {
 	body {
