@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField
+from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField, DateField
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
 from wtforms.widgets import TextArea
+# from flask.ext.admin.form.widgets import DatePickerWidget
+from datetime import datetime
 
 class LoginForm(Form):
     username = StringField('username',
@@ -35,3 +37,9 @@ class LogAdd(Form):
     group = SelectField('group',
         coerce=int,
         validators = [DataRequired("Необходимо заполнить все поля")])
+    balance = BooleanField('balance',
+        default = False)
+    date = DateField('date',
+        format = '%Y-%m-%d',
+        # widget=DatePickerWidget(),
+        validators = [DataRequired("Необходимо ввести корректное значение [yyyy-mm-dd]")])

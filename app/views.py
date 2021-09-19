@@ -2,6 +2,7 @@ from flask import render_template, abort, request, redirect, url_for, g, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from app import app, forms, models, db
 from sqlalchemy import or_
+from datetime import datetime
 
 lm = LoginManager()
 lm.init_app(app)
@@ -22,6 +23,7 @@ def load_user(user_id):
 def before_request():
     g.user = current_user
 
+@app.route('/')
 @app.route('/dashboard')
 # @login_required
 def index():
@@ -93,13 +95,16 @@ def log_add():
         add = models.MoneyLog(cost = form.cost.data,
             description = form.description.data,
             group_id = form.group.data,
-            user_id = g.user.id)
-        g.user.balance += form.cost.data
-        if(g.user.balance < 0): g.user.balance = 0
+            user_id = g.user.id,
+            timestamp = form.date.data)
+        if(form.balance.data == True):
+            g.user.balance += form.cost.data
+            if(g.user.balance < 0): g.user.balance = 0
         db.session.add(add)
         db.session.commit()
         flash("Запись успешно добавлена" ,"success")
         return redirect(url_for('index'))
+    form.date.data = datetime.now()
     return render_template("log/add.html",
         title = "Добавить запись",
         form = form,
@@ -125,13 +130,14 @@ def log_edit(id_):
         item.group_id = form.group.data
         item.cost = form.cost.data
         item.description = form.description.data
+        item.timestamp = form.date.data
         db.session.commit()
         flash("Запись успешно сохранена" ,"success")
         return redirect(url_for('index'))
-    else:
-        form.group.data = item.group_id
-        form.cost.data = item.cost
-        form.description.data = item.description
+    form.group.data = item.group_id
+    form.cost.data = item.cost
+    form.description.data = item.description
+    form.date.data = item.timestamp
     return render_template("log/edit.html",
         title = "Редактировать запись",
         form = form,

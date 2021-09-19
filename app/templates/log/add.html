@@ -13,17 +13,24 @@
       {% endif %}
     {% endwith %}
     <p>
-        Сумма: {% if form.cost.errors[0] %}<br><span class="error">{{ form.cost.errors[0] }}</span>{% endif %}<br>
-        {{form.cost()}} ₽<br>
+        <label>Дата:</label> {% if form.date.errors[0] %}<span class="form error">{{ form.date.errors[0] }}</span>{% endif %}
+        {{form.date(placeholder='yyyy-mm-dd')}}
     </p>
     <p>
-        Пояснение: {% if form.description.errors[0] %}<br><span class="error">{{ form.description.errors[0] }}</span>{% endif %}<br>
-        {{form.description()}}<br>
+        <label>Сумма:</label> {% if form.cost.errors[0] %}<span class="form error">{{ form.cost.errors[0] }}</span>{% endif %}
+        <small class="form">Укажите отрицательное значение, если подразумевается расход</small>
+        {{form.cost()}} ₽
     </p>
     <p>
-        Группа: {% if form.group.errors[0] %}<br><span class="error">{{ form.group.errors[0] }}</span>{% endif %}<br>
-        {{form.group()}}<br>
+        <label>Пояснение:</label> {% if form.description.errors[0] %}<span class="form error">{{ form.description.errors[0] }}</span>{% endif %}
+        {{form.description()}}
     </p>
+    <p>
+        <label>Группа:</label> {% if form.group.errors[0] %}<br><span class="form error">{{ form.group.errors[0] }}</span>{% endif %}
+        {{form.group()}}
+    </p>
+    <p>{{form.balance}} <label style="display: inline;" for="balance">Влияет на баланс</label>
+    <small class="form">Добавить/отнять сумму от общего баланса</small></p>
     <p><input type="submit" value="Добавить"></p>
 </form> 
 {% endblock %} 

@@ -20,7 +20,7 @@
         Пароль: {% if form.password.errors[0] %}<br><span class="error">{{ form.password.errors[0] }}</span>{% endif %}<br>
         {{form.password()}}<br>
     </p>
-    <p>{{form.remember_me}} Запомнить меня</p>
+    <p>{{form.remember_me}} <label style="display: inline;" for="remember_me">Запомнить меня</label></p>
     <p><input type="submit" value="Войти"></p>
 </form> 
 {% endblock %} 

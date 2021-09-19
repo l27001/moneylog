@@ -1,6 +1,7 @@
 import os
 CSRF_ENABLED = True
 SECRET_KEY = '**SECRET_KEY**'
+JSON_SORT_KEYS = False
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
