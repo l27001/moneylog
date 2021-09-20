@@ -13,7 +13,7 @@
     </p>
     <p>
         <label>Пояснение:</label> {% if form.description.errors[0] %}<span class="form error">{{ form.description.errors[0] }}</span>{% endif %}
-        {{form.description()}}
+        {{form.description(placeholder="Не обязательно")}}
     </p>
     <p>
         <label>Группа:</label> {% if form.group.errors[0] %}<br><span class="form error">{{ form.group.errors[0] }}</span>{% endif %}
@@ -25,3 +25,12 @@
 </form> 
 {% endblock %} 
  
+{% block extrajs %}
+<script>
+$(document).ready(function() {
+    date = new DateTime($('#date'), {
+        format: 'YYYY-MM-DD'
+    });
+} );
+</script>
+{% endblock %}

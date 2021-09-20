@@ -1,4 +1,4 @@
-from flask import render_template, abort, request, redirect, url_for, g, session, flash
+from flask import render_template, abort, request, redirect, url_for, g, session, flash, jsonify
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from app import app, forms, models, db
 from sqlalchemy import or_
@@ -29,20 +29,36 @@ def before_request():
 @app.route('/dashboard')
 @login_required
 def index():
-    if(g.user.is_authenticated):
-        logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
-        groups = {}
-        for n in models.Group.query.all():
-            n = n.__dict__
-            groups.update({n['id']:[n['name'], n['description']]})
-    else:
-        logs = None
-        groups = None
+    # if(g.user.is_authenticated):
+    #     logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
+    #     groups = {}
+    #     for n in models.Group.query.all():
+    #         n = n.__dict__
+    #         groups.update({n['id']:n['name']})
+    # else:
+    #     logs = None
+    #     groups = None
+    logs = None
     return render_template('index.html',
         title = "Главная",
         user = g.user,
-        logs = logs,
-        groups = groups)
+        logs = logs)
+
+@app.route('/log/get')
+def log_get():
+    logs_count = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).count()
+    logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
+    if(logs):
+        logs_out = []
+        groups = {}
+        for n in models.Group.query.all():
+            n = n.__dict__
+            groups.update({n['id']:n['name']})
+        for log in logs:
+            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), groups[log.group_id], log.description, log.cost, log.id])
+    else:
+        logs_out = []
+    return jsonify(logs_out)
 
 @app.route('/logout')
 @login_required
@@ -114,7 +130,7 @@ def log_add():
         form = form,
         user = g.user)
 
-@app.route('/log/del/<int:id_>', methods=['GET'])
+@app.route('/log/delete/<int:id_>', methods=['GET'])
 @login_required
 def log_del(id_):
     d = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id, models.MoneyLog.id == id_).first_or_404()
@@ -154,6 +170,11 @@ def user_balance_edit():
     try: balance = int(balance)
     except ValueError: abort(400)
     if(balance is None): abort(400)
+    if(balance < 0):
+        return {"status": "fail", "description": "Сумма не может быть меньше 0"}, 200
+    old_balance = g.user.balance
     g.user.balance = balance
+    add = models.MoneyLog(group_id = 0, user_id = g.user.id, cost = balance-old_balance, description = "Изменение баланса")
+    db.session.add(add)
     db.session.commit()
     return {"status": "success"}, 200

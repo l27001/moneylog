@@ -5,8 +5,13 @@
 	<input id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 ₽{% else %}Вы не авторизованы{% endif %}</h2>
 <button class="main" onclick="location.href='{{ url_for('log_add') }}'">Добавить запись</button>
-{% if logs %}
 <div class="index_table">
+<table>
+<h4>Сортировать по дате</h4>
+<tbody>
+<p>От: <input type="text" id="min" name="min">  До: <input type="text" id="max" name="max"></p>
+</tbody>
+</table>
 <table id="index_table" class="display hover compact" border="1">
 	<thead>
 		<tr>
@@ -17,54 +22,113 @@
 			<th width="180px">Действия</th>
 		</tr>
 	</thead>
-	<tbody>
-		{% for item in logs %}
-		<tr><td>{{ item.timestamp }}</td><td title="{{ groups[item.group_id][1] }}">{{ groups[item.group_id][0] }}</td><td>{% if item.description %}{{ item.description }}{% else %}<i>Отсутствует</i>{% endif %}</td><td><span class="{% if item.cost < 0 %}error{% else %}success{% endif %}">{{ item.cost }} ₽</span></td><td><button class="green edit" onclick="location.href='{{ url_for('log_edit', id_ = item.id) }}'">Изменить</button> <button class="red delete" onclick="if(confirm('Удалить запись?')){location.href='{{ url_for('log_del', id_ = item.id) }}'}">Удалить</button></td></tr>
-		{% endfor %}
-	</tbody>
+
 </table>
 </div>
-	{% else %}
-	<h3>Тут ещё ничего нет</h3>
-	{% endif %}
 {% endblock %}
 {% block extrajs %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script>
-$(document).ready( function () {
- 	$('#index_table').DataTable({
- 		// responsive: true,
- 		order: [[0, "desc"]],
- 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" }
- 	});
-} );
-</script>
-<script>
-	let bal = document.getElementById('balance');
-	let bal_input = document.getElementById('input_balance');
-	function input_hide() {
-		let balance = Number(bal_input.value);
-		if(bal.innerHTML != balance && !isNaN(balance) && balance >= 0) {
-			$.ajax({
-		    	url: "{{url_for('user_balance_edit')}}",
-		    	dataType: "json",
-		    	async: true,
-		    	type: "POST",
-		    	data: {balance: balance}
-			});
-			bal.innerHTML = balance;
-		} else {
-			bal_input.value = bal.innerHTML;
+	var minDate, maxDate;
+	 
+	// Custom filtering function which will search data in column four between two values
+	$.fn.dataTable.ext.search.push(
+	    function( settings, data, dataIndex ) {
+	        var min = minDate.val();
+	        var max = maxDate.val();
+	        var date = new Date( data[0] );
+	 
+	        if (
+	            ( min === null && max === null ) ||
+	            ( min === null && date <= max ) ||
+	            ( min <= date   && max === null ) ||
+	            ( min <= date   && date <= max )
+	        ) {
+	            return true;
+	        }
+	        return false;
+	    }
+	);
+	 
+	$(document).ready(function() {
+	    // Create date inputs
+	    minDate = new DateTime($('#min'), {
+	        format: 'YYYY-MM-DD'
+	    });
+	    maxDate = new DateTime($('#max'), {
+	        format: 'YYYY-MM-DD'
+	    });
+	 
+	    // DataTables initialisation
+		var table = $('#index_table').DataTable({
+		 	responsive: true,
+		 	ajax: {
+		 		url: "{{url_for('log_get')}}",
+			 	dataSrc: function ( json ) {
+			    	for ( var i=0, ien=json.length ; i<ien ; i++ ) {
+			    		if(json[i][2] == '') {
+			    			json[i][2] = '<i>Отсутствует</i>';
+			    		}
+			    		if(json[i][3] < 0) {
+			    			var color = "error";
+			    		} else {
+			    			var color = "success";
+			    		}
+			    		json[i][3] = "<span class=\""+color+"\">"+json[i][3]+" ₽</span>";
+			    		json[i][4] = "<td><button class=\"green edit\" onclick=\"location.href='/log/edit/"+json[i][4]+"'\">Изменить</button> <button class=\"red delete\" onclick=\"if(confirm('Удалить запись?')){location.href='/log/delete/"+json[i][4]+"'}\">Удалить</button></td>";
+			    	}
+			      	return json;
+		    	}
+		    },
+		    columnDefs: [
+			    { orderable: false, targets: [2,4] }
+			],
+			order: [[0, "desc"]],
+	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" }
+	 	});
+	 
+	    // Refilter the table
+	    $('#min, #max').on('change', function () {
+	        table.draw();
+	    });
+
+
+	    let bal = document.getElementById('balance');
+		let bal_input = document.getElementById('input_balance');
+		function input_hide() {
+			let balance = Number(bal_input.value);
+			if(bal.innerHTML != balance && !isNaN(balance) && balance >= 0) {
+				$.ajax({
+			    	url: "{{url_for('user_balance_edit')}}",
+			    	dataType: "json",
+			    	async: true,
+			    	type: "POST",
+			    	data: {balance: balance},
+			    	success: function(data) {
+			    	    if(data['status'] == "success") {
+			    	        bal.innerHTML = balance;
+			    	        table.ajax.reload();
+			    	    } else if(data['status'] == "fail") {
+			    	        bal_input.value = bal.innerHTML;
+			    	    } else if(data['status'] == "unauthorized") {
+			    	        window.reload();
+			    	    }
+			    	}
+				});
+			} else {
+				bal_input.value = bal.innerHTML;
+			}
+			bal.hidden = false;
+			bal_input.hidden = true;
+			bal_input.blur();
 		}
-		bal.hidden = false;
-		bal_input.hidden = true;
-		bal_input.blur();
-	}
-	function input_show() {
-		bal.hidden = true;
-		bal_input.hidden = false;
-		bal_input.focus();
-		bal_input.addEventListener("blur", input_hide, once=true);
-	}
-	bal.addEventListener("click", input_show);
+		function input_show() {
+			bal.hidden = true;
+			bal_input.hidden = false;
+			bal_input.focus();
+			bal_input.addEventListener("blur", input_hide, once=true);
+		}
+		bal.addEventListener("click", input_show);
+	});
 </script>
 {% endblock %}

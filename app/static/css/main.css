@@ -120,9 +120,16 @@ h2.logo {
 	margin-right: 5px;
 	font-weight: bold;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 730px) {
 	body {
 		text-align: center;
 		clear: both;
 	}
+    form, form input, form select, form textarea {
+        font-size: 28px;
+    }
+    form input[type=submit] {
+        height: 50px;
+        width: 150px;
+    }
 }

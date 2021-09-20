@@ -32,7 +32,6 @@ class User(db.Model):
 class Group(db.Model):
     id = db.Column(db.SmallInteger, primary_key = True)
     name = db.Column(db.String(128), nullable = False)
-    description = db.Column(db.String(128), nullable = False)
 
     def __repr__(self):
         return '<Group %r>' % (self.name)
