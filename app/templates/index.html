@@ -4,15 +4,15 @@
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 ₽{% else %}Вы не авторизованы{% endif %}</h2>
-<button class="main" onclick="location.href='{{ url_for('log_add') }}'">Добавить запись</button>
 <div class="index_table">
+<button class="main" onclick="location.href='{{ url_for('log_add') }}'">Добавить запись</button>
 <table>
-<h4>Сортировать по дате</h4>
 <tbody>
+<h4>Сортировать по дате</h4>
 <p>От: <input type="text" id="min" name="min">  До: <input type="text" id="max" name="max"></p>
 </tbody>
 </table>
-<table id="index_table" class="display hover compact" border="1">
+<table id="index_table" class="display hover compact dt-center" border="1">
 	<thead>
 		<tr>
 			<th width="180px">Дата</th>
@@ -83,8 +83,9 @@
 		    columnDefs: [
 			    { orderable: false, targets: [2,4] }
 			],
+			autoWidth: true,
 			order: [[0, "desc"]],
-	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" }
+	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" },
 	 	});
 	 
 	    // Refilter the table

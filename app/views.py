@@ -55,7 +55,9 @@ def log_get():
             n = n.__dict__
             groups.update({n['id']:n['name']})
         for log in logs:
-            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), groups[log.group_id], log.description, log.cost, log.id])
+            try: group = groups[log.group_id]
+            except KeyError: group = "Неизвестно"
+            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), group, log.description, log.cost, log.id])
     else:
         logs_out = []
     return jsonify(logs_out)

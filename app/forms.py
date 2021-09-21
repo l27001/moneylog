@@ -35,8 +35,7 @@ class LogAdd(Form):
         validators = [Length(0,128,"Максимальная длина пояснения 128 символов")],
         widget=TextArea())
     group = SelectField('group',
-        coerce=int,
-        validators = [DataRequired("Необходимо заполнить все поля")])
+        coerce=int)
     balance = BooleanField('balance',
         default = False)
     date = DateField('date',

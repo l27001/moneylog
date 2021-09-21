@@ -1,26 +1,76 @@
-@font-face {
+/*@font-face {
 	font-family: 'Roboto';
 	src: url("../font/Roboto.ttf") format("truetype");
 	src: url("../font/Roboto.woff") format("woff");
 	src: url("../font/Roboto.woff2") format("woff2");
 
-}
+}*/
 body {
-	font-family: 'Roboto';
+	/*font-family: 'Roboto';*/
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	min-width: 640px;
+	color: #333;
+	margin: 0;
 }
-ul.head li {
-	display: inline;
-	margin-right: 5px;
-	padding: 3px;
+header {
+	background-color: #2f2f2f;
+}
+.content {
+	margin: 10px;
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+form {
+	font-size: 20px;
+	background-color: #333;
+	color: #fff;
+	padding: 10px 20px;
+	max-width: 30%;
+	margin: 0 auto;
+	border: 2px solid #fff;
+	border-radius: 40px;
+}
+form input, form textarea {
+	padding: 8px !important;
 }
 ul.head {
 	margin: 0;
-    padding: 4px;
+    padding: 10px 4px;
+}
+ul.head li {
+	display: inline;
+	margin: 5px;
+	padding: 3px 5px;
+}
+ul.head li a {
+	text-align: center;
+	text-decoration: none;
+	color: #f2f2f2;
+	padding: 17px 4px 14px;
+}
+ul.head li a:hover {
+	background-color: #737373;
+}
+h2.logo {
+	color: gray;
+	display: inline;
+	margin: 5px;
+	font-weight: bold;
 }
 
 ul.messages {
 	list-style-type: none;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px 20px 20px;
+	border: 1px solid #333;
+	width: 15em;
+}
+select {
+	color: #fff;
+	border: 1px solid transparent;
 }
 .error {
 	font-weight: bold;
@@ -46,36 +96,57 @@ label, .form {
 	display: block;
 	margin-bottom: 5px;
 }
+table.dataTable {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+table.dataTable.no-footer {
+	border-bottom: 1px solid #ddd;
+}
+table.dataTable.compact thead th {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: 1px solid #ddd;
+}
+table.dataTable.display tbody td {
+	border: 1px solid #ddd;
+}
 button, input[type=submit] {
 	border: 1px solid transparent;
-	border-radius: 0;
+	border-radius: 5px;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	padding: 5px 4px !important;
 	cursor: pointer;
+	background-color: #2b5ffb;
+	color: #fff;
 }
 button.main, input[type=submit] {
 	margin-bottom: 10px;
 	width: 150px;
 	height: 30px;
-	border-color: #aaa;
+}
+input {
+	border-radius: 10px;
 }
 .dataTables_wrapper .dataTables_filter input, input[type=text], input[type=search], textarea {
-	border-radius: 5px;
+	border-radius: 10px;
 	border: 1px solid #aaa;
 	padding: 5px;
 }
 .dataTables_wrapper .dataTables_length select, select {
 	border: 1px solid #aaa;
-	border-radius: 3px;
+	border-radius: 10px;
 	padding: 5px;
 	background-color: transparent;
 	padding: 4px;
+	color: #333;
 }
 button.main:hover, button.main:active, input[type=submit]:hover, input[type=submit]:active {
-	background-color: #dfdfdf;
+	/*background-color: #dfdfdf;*/
+	background-color: #4000ff;
 }
 button.edit {
 	margin-bottom: 5px;
@@ -114,16 +185,13 @@ div.index_table {
 small {
 	color: gray;
 }
-h2.logo {
-	color: gray;
-	display: inline;
-	margin-right: 5px;
-	font-weight: bold;
-}
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 900px) {
 	body {
 		text-align: center;
 		clear: both;
+	}
+	form {
+		max-width: 70%;
 	}
     form, form input, form select, form textarea {
         font-size: 28px;
@@ -132,4 +200,21 @@ h2.logo {
         height: 50px;
         width: 150px;
     }
+    form input[type=checkbox] {
+    	transform: scale(2);
+    	margin-right: 8px;
+    }
+    ul.messages {
+    	font-size: 20px;
+		width: 20em;
+    }
+    input.register {
+    	width: 320px !important;
+    }
+    ul.head {
+    	padding: 15px 4px;
+    }
+    ul.head li a {
+		padding: 23px 4px 19px;
+	}
 }
