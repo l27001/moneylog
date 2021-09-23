@@ -12,9 +12,13 @@ class User(db.Model):
     email = db.Column(db.String(120), index = True, unique = True)
     role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
     balance = db.Column(db.BigInteger, default = 0, nullable = False)
+    registered = db.Column(db.Date(), default = func.now(), nullable = False)
+    avatar = db.Column(db.String(64))
+    currency = db.Column(db.String(4), default = '₽')
     is_active = True
     is_authenticated = True
     is_anonymous = False
+    currency_list = ['₽', '$', '€', '£', '¥']
 
     def __repr__(self):
         return '<User %r>' % (self.username)

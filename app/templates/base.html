@@ -3,7 +3,10 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=0.6"/>
-	<title>{% if title %}{{ title }} | {% endif %}Moneylog</title>
+	<title>{% if title %}{{ title }} | {% endif %}MoneyLog</title>
+	<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+	{% block extracss %}
+	{% endblock %}
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.2/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/datetime/1.1.1/css/dataTables.dateTime.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
@@ -13,12 +16,13 @@
 		<ul class="head">
 			<h2 class="logo"><span style="color: green;">Money</span>Log</h2>
 			{% if user.is_authenticated == False %}
-			<li><a href="{{ url_for('auth') }}">Вход</a></li>
-			<li><a href="{{ url_for('register') }}">Регистрация</a></li>
+			<li><a{% if title == "Вход" %} class="active"{% endif %} href="{{ url_for('auth') }}">Вход</a></li>
+			<li><a{% if title == "Регистрация" %} class="active"{% endif %} href="{{ url_for('register') }}">Регистрация</a></li>
 			{% endif %}
-			<li><a href="{{ url_for('index') }}">Главная</a></li>
+			<li><a{% if title == "Главная" %} class="active"{% endif %} href="{{ url_for('index') }}">Главная</a></li>
 			{% if user.is_authenticated == True %}
 			<li><a href="{{ url_for('logout') }}">Выход</a></li>
+			<li class="profile"><a class="{% if title == 'Профиль' %}active {% endif%}" href="{{url_for('profile')}}"><img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">{{ user.username }}</a></li>
 			{% endif %}
 		</ul>
 	</header>

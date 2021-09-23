@@ -9,7 +9,7 @@
     <p>
         <label>Сумма:</label> {% if form.cost.errors[0] %}<span class="form error">{{ form.cost.errors[0] }}</span>{% endif %}
         <small class="form">Укажите отрицательное значение, если подразумевается расход</small>
-        {{form.cost()}} ₽
+        {{form.cost()}} {{user.currency}}
     </p>
     <p>
         <label>Пояснение:</label> {% if form.description.errors[0] %}<span class="form error">{{ form.description.errors[0] }}</span>{% endif %}

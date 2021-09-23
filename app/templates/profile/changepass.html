@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<form action="" method="post" name="profile_changepass">
+    {{ form.hidden_tag() }}
+    <p>
+        <label>Текущий пароль:</label> {% if form.cur_password.errors[0] %}<span class="form error">{{ form.cur_password.errors[0] }}</span>{% endif %}
+        {{ form.cur_password(autocomplete='off') }}
+    </p>
+    <p>
+        <label>Новый пароль:<label> {% if form.new_password.errors[0] %}<span class="form error">{{ form.new_password.errors[0] }}</span>{% endif %}
+        {{ form.new_password() }}
+    </p>
+    <p>
+        <label>Повторите пароль:</label> {% if form.new_password2.errors[0] %}<span class="form error">{{ form.new_password2.errors[0] }}</span>{% endif %}
+        {{ form.new_password2() }}<br>
+        <input onchange="pw_change_visiblity('new_password');pw_change_visiblity('new_password2');" id="pw_visible" type="checkbox"><label for="pw_visible" style="display: inline"> Показать пароль</label>
+    </p>
+    <p><input type="submit" value="Подтвердить"></p>
+</form> 
+{% endblock %}
+{% block extrajs %}
+<script src="/static/js/pw_visibility.js"></script>
+{% endblock %} 

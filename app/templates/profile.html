@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+<div class="profile">
+	<img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
+	<form id="avatar_change" enctype="multipart/form-data" method="post">
+	<h4 style="margin: 0;">Изменить аватар</h4>
+	<small>Не более 40МБ</small>
+	{{form.hidden_tag()}}
+	{% if form.file.errors[0] %}<span class="form error">{{ form.file.errors[0] }}</span>{% endif %}
+	{{form.file()}}<br>
+	<input type="submit" value="Загрузить" />
+	</form>
+	<div id="profile_info">
+		<h3>Логин: {{user.username}}</h3>
+		<h4><ul>
+			<li>ID: {{user.id}}</li>
+			<li>Email: {{user.email}}</li>
+			<li>Дата регистрации: {{user.registered}}</li>
+			<li>Валюта: <select onchange="change_currency(this.value)">
+				{% for n in user.currency_list %}
+					<option value="{{n}}"{% if n == user.currency %}selected{% endif %}>{{n}}</option>
+				{% endfor %}
+				}
+			</select></li>
+		</ul></h4>
+		<button class="main red" onclick="if(confirm('Вы действительно хотите удалить аккаунт? Это действие нельзя отменить!')) {location.href = '/profile/delete'}">Удалить аккаунт</button>
+		<button class="main" onclick="location.href = '/profile/changepass'">Сменить пароль</button>
+	</div>
+</div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<script>
+	function change_currency(currency) {
+		$.ajax({
+			url: "{{url_for('change_currency')}}",
+			dataType: "json",
+			async: true,
+			type: "POST",
+			data: {currency: currency},
+			success: function(data) {
+			    location.reload();
+			}
+		});
+	}
+</script>
+{% endblock %}

@@ -3,22 +3,25 @@
 <form action="" method="post" name="register">
     {{ form.hidden_tag() }}
     <p>
-        Логин: {% if form.username.errors[0] %}<br><span class="error">{{ form.username.errors[0] }}</span>{% endif %}<br>
-        {{ form.username() }}<br>
+        <label>Логин:</label> {% if form.username.errors[0] %}<span class="form error">{{ form.username.errors[0] }}</span>{% endif %}
+        {{ form.username() }}
     </p>
     <p>
-        Email: {% if form.email.errors[0] %}<br><span class="error">{{ form.email.errors[0] }}</span>{% endif %}<br>
-        {{ form.email() }}<br>
+        <label>Email:</label> {% if form.email.errors[0] %} <span class="form error">{{ form.email.errors[0] }}</span>{% endif %}
+        {{ form.email() }}
     </p>
     <p>
-        Пароль:{% if form.password.errors[0] %}<br><span class="error">{{ form.password.errors[0] }}</span>{% endif %}<br>
-        {{ form.password() }}<br>
+        <label>Пароль:<label> {% if form.password.errors[0] %}<span class="form error">{{ form.password.errors[0] }}</span>{% endif %}
+        {{ form.password() }}
     </p>
     <p>
-        Повторите пароль: {% if form.password2.errors[0] %}<br><span class="error">{{ form.password2.errors[0] }}</span>{% endif %}<br>
+        <label>Повторите пароль:</label> {% if form.password2.errors[0] %}<span class="form error">{{ form.password2.errors[0] }}</span>{% endif %}
         {{ form.password2() }}<br>
+        <input onchange="pw_change_visiblity('password');pw_change_visiblity('password2');" id="pw_visible" type="checkbox"><label for="pw_visible" style="display: inline"> Показать пароль</label>
     </p>
     <p><input class="register" type="submit" value="Зарегистрироваться"></p>
 </form> 
+{% endblock %}
+{% block extrajs %}
+<script src="/static/js/pw_visibility.js"></script>
 {% endblock %} 
- 

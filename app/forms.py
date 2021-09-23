@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField, DateField
+from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField, DateField, HiddenField
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
 from wtforms.widgets import TextArea
 # from flask.ext.admin.form.widgets import DatePickerWidget
 from datetime import datetime
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from app import app
 
 class LoginForm(Form):
     username = StringField('username',
@@ -42,3 +44,25 @@ class LogAdd(Form):
         format = '%Y-%m-%d',
         # widget=DatePickerWidget(),
         validators = [DataRequired("Необходимо ввести корректное значение [yyyy-mm-dd]")])
+
+class ProfileChangepass(Form):
+    cur_password = StringField('cur_password',
+        validators = [DataRequired("Заполните все поля")],)
+    new_password = PasswordField('new_password',
+        validators = [DataRequired("Заполните все поля"),
+            Length(6,40,"Пароль должен содержать от 6 до 40 символов")])
+    new_password2 = PasswordField('new_password2',
+        validators = [DataRequired("Заполните все поля"),
+            EqualTo("new_password", "Пароли должны совпадать")])
+
+class UploadAvatarForm(Form):
+    file = FileField('Upload (<=40M)', validators=[
+        FileRequired("Необходимо прикрепить файл"),
+        FileAllowed(app.config['ALLOWED_FILE_EXTENSIONS'], 'Поддерживаются только форматы ' + (',').join(app.config['ALLOWED_FILE_EXTENSIONS']))
+    ])
+
+class CropAvatarForm(Form):
+    x = HiddenField()
+    y = HiddenField()
+    w = HiddenField()
+    h = HiddenField()
