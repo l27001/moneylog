@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content">
 <div class="profile">
 	<img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
 	<form id="avatar_change" enctype="multipart/form-data" method="post">
@@ -19,7 +18,7 @@
 			<li>Дата регистрации: {{user.registered}}</li>
 			<li>Валюта: <select onchange="change_currency(this.value)">
 				{% for n in user.currency_list %}
-					<option value="{{n}}"{% if n == user.currency %}selected{% endif %}>{{n}}</option>
+					<option value="{{n}}"{% if n == user.currency %} selected{% endif %}>{{n}}</option>
 				{% endfor %}
 				}
 			</select></li>
@@ -27,7 +26,6 @@
 		<button class="main red" onclick="if(confirm('Вы действительно хотите удалить аккаунт? Это действие нельзя отменить!')) {location.href = '/profile/delete'}">Удалить аккаунт</button>
 		<button class="main" onclick="location.href = '/profile/changepass'">Сменить пароль</button>
 	</div>
-</div>
 </div>
 {% endblock %}
 {% block extrajs %}

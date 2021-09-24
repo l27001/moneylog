@@ -32,20 +32,9 @@ def before_request():
 @app.route('/dashboard')
 @login_required
 def index():
-    # if(g.user.is_authenticated):
-    #     logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
-    #     groups = {}
-    #     for n in models.Group.query.all():
-    #         n = n.__dict__
-    #         groups.update({n['id']:n['name']})
-    # else:
-    #     logs = None
-    #     groups = None
-    logs = None
     return render_template('index.html',
         title = "Главная",
-        user = g.user,
-        logs = logs)
+        user = g.user)
 
 @app.route('/log/get', methods=['POST'])
 def log_get():
@@ -225,6 +214,8 @@ def avatar_crop():
 def profile():
     form = forms.UploadAvatarForm()
     if(form.validate_on_submit() == True):
+        if(os.path.isdir(app.config['AVATARS_SAVE_PATH']) == False):
+            os.mkdir(app.config['AVATARS_SAVE_PATH'])
         if('file' not in request.files):
             form.file.errors.append("Некорректный файл")
         file = request.files['file']

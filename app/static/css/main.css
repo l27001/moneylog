@@ -8,19 +8,20 @@
 body {
 	/*font-family: 'Roboto';*/
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	min-width: 640px;
+	min-width: 700px;
 	color: #333;
 	margin: 0;
 }
 header {
 	background-color: #2f2f2f;
 }
-.content {
+div.content {
 	margin: 10px;
 	max-width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	min-height: calc(100vh - 119px);
 }
 form {
 	font-size: 20px;
@@ -39,6 +40,7 @@ form input {
 	padding: 8px !important;
 }
 ul.head {
+	/*width: 100%;*/
 	margin: 0;
     padding: 10px 4px;
 }
@@ -52,7 +54,7 @@ ul.head li a {
 	text-align: center;
 	text-decoration: none;
 	color: #f2f2f2;
-	padding: 17px 10px 14px;
+	padding: 20px 10px 14px;
 	margin-top: -11px;
 	margin-right: -4px;
 }
@@ -63,11 +65,14 @@ ul.head li a.active {
 	background-color: #c4c4c4;
 	color: black;
 }
-ul.head li.profile {
+/*ul.head li.profile {
 	float: right;
-	display: block ruby;
-	padding: 0;
-	overflow: visible;
+}*/
+ul.head.profile {
+	right: 0;
+	position: absolute;
+	top: 0;
+	width: 192px;
 }
 ul.head li.profile a img {
 	width: 30px;
@@ -259,6 +264,7 @@ div.profile form#avatar_change {
 div.profile div#profile_info {
 	color: #333;
 	border-radius: 20px;
+	min-width: 435px;
 	box-shadow: 0 0 10px #eee;
 	background-color: #eee;
 	padding: 10px 30px;
@@ -272,6 +278,13 @@ div.jcrop-holder {
 }
 div.jcrop-holder div.preview-box {
 	visibility: hidden;
+}
+footer {
+	z-index: 1;
+	position: relative;
+	padding: 10px;
+	background-color: #aaa;
+	text-align: center;
 }
 @media screen and (max-width: 900px) {
 	body {
@@ -292,8 +305,9 @@ div.jcrop-holder div.preview-box {
         width: 150px;
     }
     form input[type=checkbox] {
-    	transform: scale(2);
-    	margin-right: 8px;
+    	height: 25px;
+    	width: 25px;
+    	/*margin-right: 8px;*/
     }
     ul.messages {
     	font-size: 20px;
@@ -306,13 +320,20 @@ div.jcrop-holder div.preview-box {
     	padding: 15px 4px;
     }
     ul.head li a {
-		padding: 23px 10px 19px;
+		padding: 25px 10px 19px;
 	}
-	ul.head li.profile {
-		padding-bottom: 6px;
+	header ul.head {
+		font-size: 16px;
 	}
-	ul.head li {
-		padding-bottom: 1px;
+	header ul li a {
+		padding-bottom: 23px;
+	}
+	header ul.head.profile {
+		width: 260px;
+		font-size: 24px;
+	}
+	header ul.head.profile li a {
+		width: 40px;
 	}
 	input#pw_visible {
 		margin-top: 25px;

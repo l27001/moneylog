@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="ru">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=0.6"/>
@@ -21,8 +21,10 @@
 			{% endif %}
 			<li><a{% if title == "Главная" %} class="active"{% endif %} href="{{ url_for('index') }}">Главная</a></li>
 			{% if user.is_authenticated == True %}
-			<li><a href="{{ url_for('logout') }}">Выход</a></li>
+		</ul>
+		<ul class="head profile">
 			<li class="profile"><a class="{% if title == 'Профиль' %}active {% endif%}" href="{{url_for('profile')}}"><img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">{{ user.username }}</a></li>
+			<li><a href="{{ url_for('logout') }}">Выход</a></li>
 			{% endif %}
 		</ul>
 	</header>
@@ -40,9 +42,11 @@
 	{% endwith %}
 	{% block content %}{% endblock %}
 	</div>
+	<footer>
+		<span>Copyright © <span id="cur_year"></span> MoneyLog</span>
+	</footer>
 	<script src="/static/js/jquery-3.6.0.min.js"></script>
-	<script src="https://cdn.datatables.net/1.11.2/js/jquery.dataTables.js"></script>
-	<script src="https://cdn.datatables.net/datetime/1.1.1/js/dataTables.dateTime.min.js"></script>
+	<script>document.getElementById('cur_year').innerHTML = new Date().getFullYear();</script>
 	{% block extrajs %}{% endblock %}
 </body>
 </html> 
