@@ -1,30 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="profile">
-	<img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
+<div class="text-center">
+	<img class="img-fluid rounded-circle" src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
 	<form id="avatar_change" enctype="multipart/form-data" method="post">
-	<h4 style="margin: 0;">Изменить аватар</h4>
-	<small>Не более 40МБ</small>
-	{{form.hidden_tag()}}
-	{% if form.file.errors[0] %}<span class="form error">{{ form.file.errors[0] }}</span>{% endif %}
-	{{form.file()}}<br>
-	<input type="submit" value="Загрузить" />
+	<h4 class="mt-2 mb-0">Изменить аватар</h4>
+	<div class="form-group">
+		<small class="text-muted form-text">Не более 40МБ</small>
+		{{form.hidden_tag()}}
+		{% if form.file.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.file.errors[0] }}</div>{% endif %}
+		{{form.file()}}
+	</div>
+	<input type="submit" class="btn btn-primary mb-5" value="Загрузить" />
 	</form>
 	<div id="profile_info">
 		<h3>Логин: {{user.username}}</h3>
-		<h4><ul>
-			<li>ID: {{user.id}}</li>
-			<li>Email: {{user.email}}</li>
-			<li>Дата регистрации: {{user.registered}}</li>
-			<li>Валюта: <select onchange="change_currency(this.value)">
+		<h4>
+			<p>ID: {{user.id}}</p>
+			<p>Email: {{user.email}}</p>
+			<p>Дата регистрации: {{user.registered}}</p>
+			<p>Валюта: <select class="form-control col-sm-2 col-lg-1 d-inline" onchange="change_currency(this.value)">
 				{% for n in user.currency_list %}
 					<option value="{{n}}"{% if n == user.currency %} selected{% endif %}>{{n}}</option>
 				{% endfor %}
 				}
-			</select></li>
-		</ul></h4>
-		<button class="main red" onclick="if(confirm('Вы действительно хотите удалить аккаунт? Это действие нельзя отменить!')) {location.href = '/profile/delete'}">Удалить аккаунт</button>
-		<button class="main" onclick="location.href = '/profile/changepass'">Сменить пароль</button>
+			</select></p>
+		</h4>
+		<button class="btn btn-danger" data-toggle="modal" data-target="#delete_account">Удалить аккаунт</button>
+		<a class="btn btn-secondary" href="/profile/changepass">Сменить пароль</a>
 	</div>
 </div>
 {% endblock %}
@@ -43,4 +45,21 @@
 		});
 	}
 </script>
+{% endblock %}
+{% block extramodals %}
+<div class="modal fade" id="delete_account" tabindex="-1" role="dialog" aria-labelledby="delete_account_title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delete_account_title">Удаление аккаунта</h5>
+      </div>
+      <div class="modal-body">
+        Вы действительно хотите удалить аккаунт? Это действие нельзя отменить!</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <button type="button" onclick="location.href = '/profile/delete'" class="btn btn-danger" data-dismiss="modal">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

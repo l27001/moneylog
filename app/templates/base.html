@@ -7,46 +7,72 @@
 	<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 	{% block extracss %}
 	{% endblock %}
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.2/css/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/datetime/1.1.1/css/dataTables.dateTime.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/date-1.1.1/r-2.2.9/datatables.min.css"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 <body>
-	<header>
-		<ul class="head">
-			<h2 class="logo"><span style="color: green;">Money</span>Log</h2>
+	<nav class="navbar navbar-expand navbar-dark bg-dark">
+		<span class="navbar-brand mb-0 h1"><span style="color: green;">Money</span>Log</span>
+		<div class="navbar-nav align-items-center">
 			{% if user.is_authenticated == False %}
-			<li><a{% if title == "Вход" %} class="active"{% endif %} href="{{ url_for('auth') }}">Вход</a></li>
-			<li><a{% if title == "Регистрация" %} class="active"{% endif %} href="{{ url_for('register') }}">Регистрация</a></li>
+			<a class="nav-item nav-link {% if title == "Вход" %} active{% endif %}" href="{{ url_for('auth') }}">Вход</a>
+			<a class="nav-item nav-link{% if title == "Регистрация" %} active{% endif %}" href="{{ url_for('register') }}">Регистрация</a>
 			{% endif %}
-			<li><a{% if title == "Главная" %} class="active"{% endif %} href="{{ url_for('index') }}">Главная</a></li>
+			<a class="nav-item nav-link{% if title == "Главная" %} active{% endif %}" href="{{ url_for('index') }}">Главная</a>
 			{% if user.is_authenticated == True %}
-		</ul>
-		<ul class="head profile">
-			<li class="profile"><a class="{% if title == 'Профиль' %}active {% endif%}" href="{{url_for('profile')}}"><img src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">{{ user.username }}</a></li>
-			<li><a href="{{ url_for('logout') }}">Выход</a></li>
+		</div>
+		<div class="navbar-nav col-auto ml-auto align-items-center">
+			<a class="nav-item nav-link{% if title == 'Профиль' %} active{% endif%}" href="{{url_for('profile')}}"><img class="img-fluid rounded-circle mr-2" width="30" src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">{{ user.username }}</a>
+			<a class="nav-item nav-link" href="{{ url_for('logout') }}">Выход</a>
 			{% endif %}
-		</ul>
-	</header>
-	<div class="content">
-	<h1>{% if title %}{{ title }}{% else %}Заголовок{% endif %}</h1>
+		</div>
+	</nav>
+	<h1 class="text-center mt-4 mb-5">{% if title %}{{ title }}{% else %}Заголовок{% endif %}</h1>
 	{% with messages = get_flashed_messages(with_categories=true) %}
+	    <div id="messages_list" class="col-6 text-center mx-auto">
 	    {% if messages %}
-	    <ul class="messages">
-	    	<p>Уведомления:</p>
 	        {% for category, message in messages %}
-	        	<li class="{{ category }}">{{ message }}</li>
+	        	<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+	        		{{ message }}
+	        		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				    	<span aria-hidden="true">&times;</span>
+					</button>
+	        	</div>
 	    	{% endfor %}
-	    </ul>
 	    {% endif %}
+	    </div>
 	{% endwith %}
+	<div class="container col-lg-9">
 	{% block content %}{% endblock %}
 	</div>
-	<footer>
-		<span>Copyright © <span id="cur_year"></span> MoneyLog</span>
-	</footer>
+
+	{% block extramodals %}
+	{% endblock %}
 	<script src="/static/js/jquery-3.6.0.min.js"></script>
-	<script>document.getElementById('cur_year').innerHTML = new Date().getFullYear();</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script>
+		var messages_list = document.getElementById('messages_list');
+		function createMessage(text, type) {
+			var div = document.createElement('div');
+			div.className = "alert alert-"+type+" alert-dismissible fade show";
+			div.innerHTML = text;
+			var button = document.createElement('button');
+			//type="button" class="close" data-dismiss="alert" aria-label="Close"
+			button.setAttribute('type','button');
+			button.className = "close";
+			button.setAttribute('data-dismiss','alert');
+			button.setAttribute('aria-label','Close');
+			var span = document.createElement('span');
+			span.innerHTML = "&times;";
+			span.setAttribute('aria-hidden','true');
+			messages_list.append(div);
+			div.append(button);
+			button.append(span);
+		}
+	</script>
+	<!-- <script>document.getElementById('cur_year').innerHTML = new Date().getFullYear();</script> -->
 	{% block extrajs %}{% endblock %}
 </body>
 </html> 

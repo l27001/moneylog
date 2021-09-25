@@ -15,7 +15,7 @@ lm.login_view = 'auth'
 @lm.unauthorized_handler
 def unauthorized():
     if(request.method == "GET"):
-        flash("Необходимо авторизоваться", "error")
+        flash("Необходимо авторизоваться", "danger")
         return redirect(url_for('auth'))
     else:
         return {"status":"unauthorized", "description":"Необходимо авторизоваться"}
@@ -72,7 +72,7 @@ def auth():
             flash("Вы успешно авторизовались", "success")
             return redirect(url_for('index'))
         else:
-            flash("Неверный логин или пароль", "error")
+            flash("Неверный логин или пароль", "danger")
     return render_template('auth.html',
         title = "Вход",
         form = form,
@@ -84,7 +84,7 @@ def register():
     form = forms.RegisterForm()
     if(form.validate_on_submit() == True):
         if(models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.email.data)).first() is not None):
-            flash("Пользователь с таким именем или email уже зарегистрирован", "error")
+            flash("Пользователь с таким именем или email уже зарегистрирован", "danger")
         else:
             user = models.User(username = form.username.data, email = form.email.data)
             user.set_password(form.password.data)
@@ -270,7 +270,7 @@ def profile_delete():
 def change_currency():
     currency = request.form['currency']
     if(currency not in g.user.currency_list):
-        flash("Валюты нет в списке", "error")
+        flash("Валюты нет в списке", "danger")
         return {"status":"fail", "description":"Валюты нет в списке"}
     flash("Валюта изменена", "success")
     if(currency == g.user.currency): return {"status": "success"}

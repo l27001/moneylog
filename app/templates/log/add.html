@@ -1,27 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
-<form action="" method="post" name="log_add">
-    {{form.hidden_tag()}}
-    <p>
-        <label>Дата:</label> {% if form.date.errors[0] %}<span class="form error">{{ form.date.errors[0] }}</span>{% endif %}
-        {{form.date(placeholder='yyyy-mm-dd')}}
-    </p>
-    <p>
-        <label>Сумма:</label> {% if form.cost.errors[0] %}<span class="form error">{{ form.cost.errors[0] }}</span>{% endif %}
-        <small class="form">Укажите отрицательное значение, если подразумевается расход</small>
-        {{form.cost()}} {{user.currency}}
-    </p>
-    <p>
-        <label>Пояснение:</label> {% if form.description.errors[0] %}<span class="form error">{{ form.description.errors[0] }}</span>{% endif %}
-        {{form.description(placeholder="Не обязательно")}}
-    </p>
-    <p>
-        <label>Группа:</label> {% if form.group.errors[0] %}<br><span class="form error">{{ form.group.errors[0] }}</span>{% endif %}
-        {{form.group()}}
-    </p>
-    <p>{{form.balance}} <label style="display: inline;" for="balance">Влияет на баланс</label>
-    <small class="form">Добавить/отнять сумму от общего баланса</small></p>
-    <p><input type="submit" value="Добавить"></p>
+<form class="mx-auto col-lg-6" method="post">
+    <div class="form-group">
+        {{form.hidden_tag()}}
+            <label for="date">Дата:</label>
+            {{form.date(placeholder='yyyy-mm-dd', class="form-control")}}
+            {% if form.date.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.date.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-group">
+        <label for="cost">Сумма:</label>
+        <small class="text-muted form-text mt-0">Укажите отрицательное значение, если подразумевается расход</small>
+        <div class="input-group">
+            {{form.cost(class="form-control")}} <div class="input-group-append"><span class="input-group-text">{{user.currency}}</span></div>
+        </div>
+        {% if form.cost.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.cost.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-group">
+        <label>Пояснение:</label>
+        {{form.description(placeholder="Не обязательно", class="form-control")}}
+        {% if form.description.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.description.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-group">
+        <label>Группа:</label>
+        {{form.group(class="form-control")}}
+        {% if form.group.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.group.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-check">
+        <small class="text-muted form-text">Добавить/отнять сумму от общего баланса</small>
+        {{form.balance(class="form-check-input")}} <label for="balance">Влияет на баланс</label>
+    </div>
+    <button type="submit" class="btn btn-success">Добавить</button>
 </form> 
 {% endblock %} 
  

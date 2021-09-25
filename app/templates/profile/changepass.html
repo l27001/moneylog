@@ -1,23 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-<form action="" method="post" name="profile_changepass">
-    {{ form.hidden_tag() }}
-    <p>
-        <label>Текущий пароль:</label> {% if form.cur_password.errors[0] %}<span class="form error">{{ form.cur_password.errors[0] }}</span>{% endif %}
-        {{ form.cur_password(autocomplete='off') }}
-    </p>
-    <p>
-        <label>Новый пароль:<label> {% if form.new_password.errors[0] %}<span class="form error">{{ form.new_password.errors[0] }}</span>{% endif %}
-        {{ form.new_password() }}
-    </p>
-    <p>
-        <label>Повторите пароль:</label> {% if form.new_password2.errors[0] %}<span class="form error">{{ form.new_password2.errors[0] }}</span>{% endif %}
-        {{ form.new_password2() }}<br>
-        <input onchange="pw_change_visiblity('new_password');pw_change_visiblity('new_password2');" id="pw_visible" type="checkbox"><label for="pw_visible" style="display: inline"> Показать пароль</label>
-    </p>
-    <p><input type="submit" value="Подтвердить"></p>
+<form class="mx-auto col-lg-6" method="post">
+    <div class="form-group">
+        {{form.hidden_tag()}}
+            <label for="cur_password">Текущий пароль:</label>
+            {{form.cur_password(class="form-control")}}
+            {% if form.cur_password.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.cur_password.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-group">
+        <label for="new_password">Новый пароль:</label>
+        <small class="text-muted form-text mt-0">Укажите отрицательное значение, если подразумевается расход</small>
+        {{form.new_password(class="form-control")}}
+        {% if form.new_password.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.new_password.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-group">
+        <label>Повторите пароль:</label>
+        {{form.new_password2(class="form-control")}}
+        {% if form.new_password2.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.new_password2.errors[0] }}</div>{% endif %}
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" onchange="pw_change_visiblity('new_password');pw_change_visiblity('new_password2');" id="pw_visible" type="checkbox"><label for="pw_visible"> Показать пароль</label>
+    </div>
+    <button type="submit" class="btn btn-success">Добавить</button>
 </form> 
-{% endblock %}
+{% endblock %} 
 {% block extrajs %}
 <script src="/static/js/pw_visibility.js"></script>
 {% endblock %} 
+
