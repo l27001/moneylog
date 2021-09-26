@@ -13,7 +13,9 @@
         {% if form.password.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.password.errors[0] }}</div>{% endif %}
         <input class="mr-1 mt-2" onchange="pw_change_visiblity('password');" id="pw_visible" type="checkbox"><label for="pw_visible"> Показать пароль</label>
     </div>
-    <div class="form-group">{{form.remember_me()}} <label for="remember_me">Запомнить меня</label></div>
+    <div class="form-group">{{form.remember_me()}} <label for="remember_me">Запомнить меня</label><br>
+    <a href="{{url_for('register')}}">Нет аккаунта?</a>
+    </div>
     <button type="submit" class="btn btn-primary mx-auto">Войти</button>
 </form> 
 {% endblock %} 

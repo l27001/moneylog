@@ -15,7 +15,7 @@ lm.login_view = 'auth'
 @lm.unauthorized_handler
 def unauthorized():
     if(request.method == "GET"):
-        flash("Необходимо авторизоваться", "danger")
+        flash("Необходимо авторизоваться", "warning")
         return redirect(url_for('auth'))
     else:
         return {"status":"unauthorized", "description":"Необходимо авторизоваться"}

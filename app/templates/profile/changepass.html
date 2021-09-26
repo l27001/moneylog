@@ -9,7 +9,6 @@
     </div>
     <div class="form-group">
         <label for="new_password">Новый пароль:</label>
-        <small class="text-muted form-text mt-0">Укажите отрицательное значение, если подразумевается расход</small>
         {{form.new_password(class="form-control")}}
         {% if form.new_password.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.new_password.errors[0] }}</div>{% endif %}
     </div>
@@ -21,7 +20,7 @@
     <div class="form-check">
         <input class="form-check-input" onchange="pw_change_visiblity('new_password');pw_change_visiblity('new_password2');" id="pw_visible" type="checkbox"><label for="pw_visible"> Показать пароль</label>
     </div>
-    <button type="submit" class="btn btn-success">Добавить</button>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
 </form> 
 {% endblock %} 
 {% block extrajs %}

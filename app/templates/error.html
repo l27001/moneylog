@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center">
+	<img width="256" class="img-fluid rounded-circle" src="/static/img/error.png">
+	<div class="alert alert-danger" role="alert">
+	  <h4 class="alert-heading">{{name}}</h4>
+	  <p>{{description}}</p>
+	  <hr>
+	  <p class="mb-0">Вы можете вернуться на <a href="/">домашнюю</a> или на <a href="javascript:%20history.go(-1)">предыдущую страницу</a>.</p>
+	</div>
+</div>
+{% endblock %}

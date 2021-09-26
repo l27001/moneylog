@@ -10,5 +10,5 @@ avatars = Avatars(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from app import views, models
+from app import http_errors, views, models
 
