@@ -1,18 +1,20 @@
 {% extends "base.html" %}
+{% block extracss %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/b-html5-2.0.1/b-print-2.0.1/date-1.1.1/r-2.2.9/datatables.min.css"/>
+{% endblock %}
 {% block content %}
 <h2 class="text-center mb-3">{% if user.is_authenticated == True %}Добро пожаловать, {{user.username}}, ваш баланс -
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 {{user.currency}}{% else %}Вы не авторизованы{% endif %}</h2>
 <div class="mx-auto text-center">
-	<a class="btn btn-success mb-3" href="{{ url_for('log_add') }}">Добавить запись</a>
 
 	<div class="col-6 mx-auto mb-5">
 		<h4>Сортировать по дате</h4>
 		<div class="form-row"><div class="col">От: <input class="form-control" type="text" id="min" name="min"></div> <div class="col">До: <input class="form-control" type="text" id="max" name="max"></div></div>
 	</div>
 </div>
-	<table id="index_table" class=" table table-striped table-bordered text-center">
+	<table id="index_table" class="table table-striped table-bordered text-center">
 		<thead>
 			<tr>
 				<th width="180px">Дата</th>
@@ -84,8 +86,25 @@
 			],
 			autoWidth: true,
 			order: [[0, "desc"]],
-	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" }
-	 	});
+	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" },
+	 		dom: "<'row'<'col-sm-12 col-md-4 mt-1'l><'col-sm-auto mx-auto col-md-4 text-center'B><'col-sm-12 col-md-4 mt-1'f>>" +
+			"<'row'<'col-sm-12'tr>>" +
+			"<'row mb-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+	 		buttons: [{
+	        text: 'Добавить',
+	        action: function (e, dt, node, config ) {
+	        	location.href = '{{url_for("log_add")}}';
+	        },
+	        className: 'btn btn-success'
+	      },
+	      {
+          text: 'Обновить',
+          action: function ( e, dt, node, config ) {
+            table.ajax.reload();
+          },
+          className: 'btn btn-info'
+	      }],
+	 		});
 	 
 	    // Refilter the table
 	    $('#min, #max').on('change', function () {
@@ -140,10 +159,11 @@
 		    success: function(data) {
 				if(data['status'] == "unauthorized") {
 			        location.reload();
-			    } else {
-	    	    	table.ajax.reload();
-	        	}
-	    	}
+			  } else {
+	    	  table.ajax.reload();
+	    	  createMessage("Запись удалена", "success");
+	      }
+	   	}
 		});
 	}
 </script>
