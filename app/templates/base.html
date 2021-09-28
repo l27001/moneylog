@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=0.6"/>
+	<meta name="viewport" content="width=device-width, initial-scale=0.6, user-scalable=no"/>
 	<title>{% if title %}{{ title }} | {% endif %}MoneyLog</title>
 	<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 	{% block extracss %}
@@ -58,7 +58,6 @@
 			div.className = "alert alert-"+type+" alert-dismissible fade show";
 			div.innerHTML = text;
 			var button = document.createElement('button');
-			//type="button" class="close" data-dismiss="alert" aria-label="Close"
 			button.setAttribute('type','button');
 			button.className = "close";
 			button.setAttribute('data-dismiss','alert');

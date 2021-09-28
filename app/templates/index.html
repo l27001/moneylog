@@ -7,10 +7,28 @@
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 {{user.currency}}{% else %}Вы не авторизованы{% endif %}</h2>
+<div class="row mb-3 col-lg-10 mx-auto">
+  <div class="col-sm-6">
+    <div class="card border-danger">
+      <div class="card-body">
+        <h5 class="card-title">Расходы за выбранный период</h5>
+        <p class="card-text h2 text-danger"><span id="id_rashod">0</span> {{user.currency}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 text-right">
+    <div class="card border-success">
+      <div class="card-body">
+        <h5 class="card-title">Доходы за выбранный период</h5>
+        <p class="card-text h2 text-success"><span id="id_dohod">0</span> {{user.currency}}</p>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="mx-auto text-center">
 
 	<div class="col-6 mx-auto mb-5">
-		<h4>Сортировать по дате</h4>
+		<h4>Период сортировки</h4>
 		<div class="form-row"><div class="col">От: <input class="form-control" type="text" id="min" name="min"></div> <div class="col">До: <input class="form-control" type="text" id="max" name="max"></div></div>
 	</div>
 </div>
@@ -30,6 +48,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/date-1.1.1/r-2.2.9/datatables.min.js"></script>
 <script>
 	var minDate, maxDate;
+	dohod = 0, rashod = 0;
 	 
 	// Custom filtering function which will search data in column four between two values
 	$.fn.dataTable.ext.search.push(
@@ -37,27 +56,40 @@
 	        var min = minDate.val();
 	        var max = maxDate.val();
 	        var date = new Date( data[0] );
-	 
+	        var cost = Number(data[3].slice(0,data[3].length-2));
+	 				if(dataIndex == 0) {
+	 					dohod = 0, rashod = 0;
+	 				}
 	        if (
 	            ( min === null && max === null ) ||
 	            ( min === null && date <= max ) ||
 	            ( min <= date   && max === null ) ||
 	            ( min <= date   && date <= max )
 	        ) {
+	        	if(cost < 0) {
+		        	rashod += cost;
+		        } else {
+		        	dohod += cost;
+		        }
 	            return true;
 	        }
 	        return false;
 	    }
 	);
-	 
-	// $(document).ready(function() {
+	 		
 	    // Create date inputs
 	    minDate = new DateTime($('#min'), {
 	        format: 'YYYY-MM-DD'
 	    });
 	    maxDate = new DateTime($('#max'), {
-	        format: 'YYYY-MM-DD'
+	        format: 'YYYY-MM-DD',
+	        default: "1999-01-01"
 	    });
+	    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+	    var firstDay = new Date(y, m, 1);
+			var lastDay = new Date(y, m + 1, 0);
+	    minDate.val(firstDay);
+	    maxDate.val(lastDay);
 	 
 	    // DataTables initialisation
 		var table = $('#index_table').DataTable({
@@ -104,14 +136,18 @@
           },
           className: 'btn btn-info'
 	      }],
+	      drawCallback: function( settings ) {
+        	document.getElementById('id_dohod').innerHTML = dohod;
+	    		document.getElementById('id_rashod').innerHTML = rashod;
+    		}
 	 		});
-	 
+
 	    // Refilter the table
 	    $('#min, #max').on('change', function () {
 	        table.draw();
 	    });
 
-	    let bal = document.getElementById('balance');
+	  let bal = document.getElementById('balance');
 		let bal_input = document.getElementById('input_balance');
 		function input_hide() {
 			let balance = Number(bal_input.value);
@@ -148,7 +184,6 @@
 		}
 		bal.addEventListener("click", input_show);
 
-	// });
 	function delete_log(id) {
 		$.ajax({
 		    url: "{{url_for('log_del')}}",
