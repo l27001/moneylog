@@ -8,7 +8,7 @@ ROLE_ADMIN = 2
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), index = True, unique = True, nullable = False)
-    password = db.Column(db.String(128), index = True, nullable = False)
+    password = db.Column(db.String(64), index = True, nullable = False)
     email = db.Column(db.String(120), index = True, unique = True)
     role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
     balance = db.Column(db.BigInteger, default = 0, nullable = False)
@@ -28,7 +28,6 @@ class User(db.Model):
 
     def set_password(self, password):
         self.password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        # db.session.commit()
 
     def check_password(self, password):
         return bcrypt.checkpw(password.encode(), self.password.encode())
