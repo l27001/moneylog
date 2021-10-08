@@ -230,6 +230,7 @@ def profile():
         form = form)
 
 @app.route('/profile/changepass', methods=['GET', 'POST'])
+@login_required
 def profile_changepass():
     form = forms.ProfileChangepass()
     if(form.validate_on_submit() == True):
@@ -267,6 +268,7 @@ def profile_delete():
     return redirect(url_for('auth'))
 
 @app.route('/profile/change_currency', methods=['POST'])
+@login_required
 def change_currency():
     currency = request.form['currency']
     if(currency not in g.user.currency_list):
@@ -277,3 +279,17 @@ def change_currency():
     g.user.currency = currency
     db.session.commit()
     return {"status":"success"}
+
+@app.route('/profile/email/change', methods=['POST'])
+@login_required
+def change_email():
+    form = forms.ChangeEmail()
+    if(form.validate_on_submit() != True):
+        return {"status":"fail", "description":form.email.errors[0]}
+    if(models.User.query.filter(models.User.email == form.email.data).first() != None):
+        return {"status":"fail", "description":"Этот email уже занят"}
+    else:
+        g.user.email = form.email.data
+        db.session.commit()
+    return {"status":"success"}
+

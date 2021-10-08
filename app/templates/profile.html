@@ -16,7 +16,7 @@
 		<h3>Логин: {{user.username}}</h3>
 		<h4>
 			<p>ID: {{user.id}}</p>
-			<p>Email: {{user.email}}</p>
+			<p>Email: <span id="text_email"><span id="user_email">{{user.email}}</span> <button class="btn btn-outline-secondary btn-sm" onclick="email_prechange()">Изменить</button></span><input type="text" id="change_email" style="display: none;" placeholder="email@example.com"></p>
 			<p>Дата регистрации: {{user.registered}}</p>
 			<p>Валюта: <select class="form-control col-sm-2 col-lg-1 d-inline" onchange="change_currency(this.value)">
 				{% for n in user.currency_list %}
@@ -43,6 +43,50 @@
 			    location.reload();
 			}
 		});
+	}
+</script>
+<script>
+function email_change(e_input, e_text) {
+		var email = String(e_input.value.toLowerCase());
+		if(email === null || email === undefined || email === '') {
+			e_input.value = '';
+			return 0;
+		}
+		if(email == e_text.innerHTML) {
+			e_input.value = '';
+			return 0;
+		}
+		$.ajax({
+			url: "{{url_for('change_email')}}",
+			dataType: "json",
+			async: true,
+			type: "POST",
+			data: {email: email},
+			success: function(data) {
+			    if(data["status"] == "success") {
+			    	e_text.innerHTML = email;
+			    	e_input.value = '';
+			    	createMessage("Email изменён", "success");
+			    } else {
+			    	e_input.value = '';
+			    	createMessage(data['description'], "danger");
+			    }
+			}
+		});
+	}
+
+	function email_prechange() {
+		var e_input = $('#change_email');
+		var e_text = $('#text_email');
+		e_input.show();
+		e_text.hide();
+		e_input.focus();
+		e_input[0].addEventListener("blur",
+			function() {
+				e_input.hide();
+				e_text.show();
+				email_change(e_input[0], $('#user_email')[0]);
+			}, {once:true});
 	}
 </script>
 {% endblock %}

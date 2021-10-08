@@ -68,9 +68,11 @@
 			messages_list.append(div);
 			div.append(button);
 			button.append(span);
+			while (messages_list.children.length > 3) {
+			    messages_list.children[0].remove();
+			}
 		}
 	</script>
-	<!-- <script>document.getElementById('cur_year').innerHTML = new Date().getFullYear();</script> -->
 	{% block extrajs %}{% endblock %}
 </body>
 </html> 

@@ -65,3 +65,11 @@ class CropAvatarForm(Form):
     y = HiddenField()
     w = HiddenField()
     h = HiddenField()
+
+class ChangeEmail(Form):
+    class Meta:
+        csrf = False
+
+    email = StringField('email',
+        validators = [DataRequired("Необходимо заполнить все поля"),
+            Email("Введён некорректный email")])
