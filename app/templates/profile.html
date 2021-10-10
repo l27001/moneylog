@@ -98,6 +98,22 @@ function email_change(e_input, e_text) {
 			}, {once:true});
 	}
 </script>
+<script>
+	function deleteAccount(){
+		location.href = "{{url_for('profile_delete')}}";
+	}
+	$('#delete-confirm')[0].addEventListener("input",
+		function() {
+			var btn = $('#button-delete')[0];
+			if(this.value === '{{user.username}}' && btn.hasAttribute('disabled')) {
+					btn.setAttribute('onclick', 'deleteAccount()');
+					btn.removeAttribute('disabled');
+			} else if(this.value !== '{{user.username}}' && !btn.hasAttribute('disabled')) {
+					btn.removeAttribute('onclick');
+					btn.setAttribute('disabled', '');
+			}
+		})
+</script>
 {% endblock %}
 {% block extramodals %}
 <div class="modal fade" id="delete_account" tabindex="-1" role="dialog" aria-labelledby="delete_account_title" aria-hidden="true">
@@ -108,9 +124,17 @@ function email_change(e_input, e_text) {
       </div>
       <div class="modal-body">
         Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить!</div>
+        <div class="mr-4 ml-4">
+	        <div class="alert alert-danger" role="alert">
+					  Для подтверждения введите ваш логин: <b>{{user.username}}</b>
+					</div>
+	        <div class="input-group">
+					  <input id="delete-confirm" type="text" class="form-control" placeholder="Ваш логин">
+					</div>
+				</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет, я передумал</button>
-        <button type="button" onclick="location.href = '/profile/delete'" class="btn btn-danger" data-dismiss="modal">Да, я уверен</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Подождите, я передумал</button>
+        <button id="button-delete" type="button" class="btn btn-danger" disabled>Подтвердить</button>
       </div>
     </div>
   </div>
