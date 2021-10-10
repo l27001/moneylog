@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="text-center">
+<div class="text-center col-lg-6 mx-auto mb-5">
 	<img class="img-fluid rounded-circle" src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
 	<form id="avatar_change" enctype="multipart/form-data" method="post">
 	<h4 class="mt-2 mb-0">Изменить аватар</h4>
-	<div class="form-group">
+	<div class="form-group col-lg-8 mx-auto">
 		<small class="text-muted form-text">Не более 40МБ</small>
 		{{form.hidden_tag()}}
 		{% if form.file.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.file.errors[0] }}</div>{% endif %}
-		{{form.file()}}
+		<div class="custom-file">
+		  <input type="file" class="custom-file-input" name="file" id="file">
+		  <label class="custom-file-label text-left" for="file">Выбрать файл</label>
+	</div>
 	</div>
 	<input type="submit" class="btn btn-primary mb-5" value="Загрузить" />
 	</form>
@@ -31,6 +34,12 @@
 </div>
 {% endblock %}
 {% block extrajs %}
+<script type="application/javascript">
+    $('input[type="file"]').change(function(e){
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+    });
+</script>
 <script>
 	function change_currency(currency) {
 		$.ajax({
