@@ -2,15 +2,11 @@ from app import db
 import bcrypt
 from sqlalchemy.sql import func
 
-ROLE_USER = 0
-ROLE_ADMIN = 2
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), index = True, unique = True, nullable = False)
     password = db.Column(db.String(64), index = True, nullable = False)
     email = db.Column(db.String(120), index = True, unique = True)
-    role = db.Column(db.SmallInteger, default = ROLE_USER, nullable = False)
     balance = db.Column(db.BigInteger, default = 0, nullable = False)
     registered = db.Column(db.Date(), default = func.now(), nullable = False)
     avatar = db.Column(db.String(64))
