@@ -30,6 +30,11 @@
 	<h1 class="text-center mt-4 mb-5">{% if title %}{{ title }}{% else %}Заголовок{% endif %}</h1>
 	{% with messages = get_flashed_messages(with_categories=true) %}
 	    <div id="messages_list" class="col-6 text-center mx-auto">
+	    <noscript>
+		    <div class="alert alert-danger fade show" role="alert">
+		        <b>Для работы сайта требуется JavaScript</b>
+		    </div>
+	    </noscript>
 	    {% if messages %}
 	        {% for category, message in messages %}
 	        	<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
@@ -40,11 +45,6 @@
 	        	</div>
 	    	{% endfor %}
 	    {% endif %}
-	    <noscript>
-		    <div class="alert alert-danger fade show" role="alert">
-		        <b>Для работы сайта требуется JavaScript</b>
-		    </div>
-	    </noscript>
 	    </div>
 	{% endwith %}
 	<div class="container col-lg-9">
@@ -62,6 +62,7 @@
 			var div = document.createElement('div');
 			div.className = "alert alert-"+type+" alert-dismissible fade show";
 			div.innerHTML = text;
+			div.setAttribute('role','alert');
 			var button = document.createElement('button');
 			button.setAttribute('type','button');
 			button.className = "close";
@@ -73,8 +74,8 @@
 			messages_list.append(div);
 			div.append(button);
 			button.append(span);
-			while (messages_list.children.length > 3) {
-			    messages_list.children[0].remove();
+			while (messages_list.children.length > 4) {
+			    messages_list.children[1].remove();
 			}
 		}
 	</script>
