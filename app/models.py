@@ -28,6 +28,12 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.checkpw(password.encode(), self.password.encode())
 
+    def get_avatar_link(self, size="m"):
+        if(self.avatar == None):
+            return "/static/img/user.png"
+        else:
+            return f"/static/avatars/{self.avatar}{size}.png"
+
 class Group(db.Model):
     id = db.Column(db.SmallInteger, primary_key = True)
     name = db.Column(db.String(128), nullable = False)

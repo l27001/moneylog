@@ -37,6 +37,7 @@ def index():
         user = g.user)
 
 @app.route('/log/get', methods=['POST'])
+@login_required
 def log_get():
     logs_count = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).count()
     logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
@@ -161,6 +162,7 @@ def log_edit(id_):
 @app.route('/profile/avatar/<path:filename>')
 @login_required
 def get_avatar(filename):
+    # используется только для обрезки аватара
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
 @app.route('/profile/balance', methods=['POST'])
@@ -195,12 +197,11 @@ def avatar_crop():
         session.pop('avatar_')
         if(g.user.avatar != None):
             for n in ['s', 'm', 'l']:
-                a = g.user.avatar.split('_')
                 try:
-                    os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + a[0] + "_" + n + a[1][1:])
+                    os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
                 except FileNotFoundError:
                     pass
-        g.user.avatar = filenames[2]
+        g.user.avatar = filenames[2].split('_')[0]+"_"
         db.session.commit()
         flash('Аватар обновлён' ,"success")
         return redirect(url_for('profile'))
@@ -292,4 +293,3 @@ def change_email():
         g.user.email = form.email.data
         db.session.commit()
     return {"status":"success"}
-

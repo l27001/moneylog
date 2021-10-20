@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="text-center col-lg-6 mx-auto mb-5">
-	<img class="img-fluid rounded-circle" src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">
+	<img class="img-fluid rounded-circle" src="{{user.get_avatar_link('l')}}">
 	<form id="avatar_change" enctype="multipart/form-data" method="post">
 	<h4 class="mt-2 mb-0">Изменить аватар</h4>
 	<div class="form-group col-lg-8 mx-auto">

@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-{% block extracss %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/b-html5-2.0.1/b-print-2.0.1/date-1.1.1/r-2.2.9/datatables.min.css"/>
-{% endblock %}
 {% block content %}
 <h2 class="text-center mb-3">{% if user.is_authenticated == True %}Добро пожаловать, {{user.username}}, ваш баланс -
 	<a href="#" id="balance">{{user.balance}}</a>
@@ -45,7 +42,6 @@
 	</table>
 {% endblock %}
 {% block extrajs %}
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/date-1.1.1/r-2.2.9/datatables.min.js"></script>
 <script>
 	var minDate, maxDate;
 	dohod = 0, rashod = 0;

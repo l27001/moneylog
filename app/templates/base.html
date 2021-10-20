@@ -22,7 +22,7 @@
 			{% if user.is_authenticated == True %}
 		</div>
 		<div class="navbar-nav col-auto ml-auto align-items-center">
-			<a class="nav-item nav-link{% if title == 'Профиль' %} active{% endif%}" href="{{url_for('profile')}}"><img class="img-fluid rounded-circle mr-2" width="30" src="{% if user.avatar %}/static/avatars/{{user.avatar}}{% else %}/static/img/user.png{% endif %}">{{ user.username }}</a>
+			<a class="nav-item nav-link{% if title == 'Профиль' %} active{% endif%}" href="{{url_for('profile')}}"><img class="img-fluid rounded-circle mr-2" src="{{user.get_avatar_link('s')}}">{{ user.username }}</a>
 			<a class="nav-item nav-link" href="{{ url_for('logout') }}">Выход</a>
 			{% endif %}
 		</div>
@@ -56,6 +56,8 @@
 	<script src="/static/js/jquery-3.6.0.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/date-1.1.1/r-2.2.9/datatables.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/b-html5-2.0.1/b-print-2.0.1/date-1.1.1/r-2.2.9/datatables.min.css"/>
 	<script>
 		var messages_list = document.getElementById('messages_list');
 		function createMessage(text, type) {
