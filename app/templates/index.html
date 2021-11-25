@@ -44,36 +44,8 @@
 {% block extrajs %}
 <script>
 	var minDate, maxDate;
-	dohod = 0, rashod = 0;
-	 
-	// Custom filtering function which will search data in column four between two values
-	$.fn.dataTable.ext.search.push(
-	    function( settings, data, dataIndex ) {
-	        var min = minDate.val();
-	        var max = maxDate.val();
-	        var date = new Date( data[0] );
-	        var cost = Number(data[3].slice(0,data[3].length-2));
-	 				if(dataIndex == 0) {
-	 					dohod = 0, rashod = 0;
-	 				}
-	        if (
-	            ( min === null && max === null ) ||
-	            ( min === null && date <= max ) ||
-	            ( min <= date   && max === null ) ||
-	            ( min <= date   && date <= max )
-	        ) {
-	        	if(cost < 0) {
-		        	rashod += cost;
-		        } else {
-		        	dohod += cost;
-		        }
-	            return true;
-	        }
-	        return false;
-	    }
-	);
 	 		
-	    // Create date inputs
+		// Create date inputs
 	    minDate = new DateTime($('#min'), {
 	        format: 'YYYY-MM-DD'
 	    });
@@ -92,8 +64,12 @@
 		 	ajax: {
 		 		url: "{{url_for('log_get')}}",
 		 		type: "POST",
+		 		data: function (d) {
+		 			d.minDate = $('#min').val();
+		 			d.maxDate = $('#max').val();
+		 		},
 			 	dataSrc: function ( json ) {
-			    	for ( var i=0, ien=json.length ; i<ien ; i++ ) {
+			    	for ( var i=0, ien=json.length-2 ; i<ien ; i++ ) {
 			    		if(json[i][2] == '') {
 			    			json[i][2] = '<i>Отсутствует</i>';
 			    		}
@@ -105,6 +81,9 @@
 			    		json[i][3] = "<td><h4><span class=\"badge badge-"+c+"\">"+json[i][3]+" {{user.currency}}</span></h4></td>";
 			    		json[i][4] = "<td><a class=\"btn btn-outline-info mx-auto mb-2\" href=\"/log/edit/"+json[i][4]+"\">Изменить</a> <button onclick=\"document.getElementById('del_id').value="+json[i][4]+"\" class=\"btn btn-outline-danger mx-auto mb-2\" data-toggle=\"modal\" data-target=\"#delete_log\">Удалить</button></td>";
 			    	}
+			    		$('#id_dohod').html(json[json.length-2]);
+			    		$('#id_rashod').html(json[json.length-1]);
+			    		json.splice(json.length-2, 2);
 			      	return json;
 		    	}
 		    },
@@ -131,15 +110,23 @@
           },
           className: 'btn btn-info'
 	      }],
-	      drawCallback: function( settings ) {
-        	document.getElementById('id_dohod').innerHTML = dohod;
-	    		document.getElementById('id_rashod').innerHTML = rashod;
-    		}
+	      // drawCallback: function( settings ) {
+        	// document.getElementById('id_dohod').innerHTML = dohod;
+	    		// document.getElementById('id_rashod').innerHTML = rashod;
+    		// }
 	 		});
 
 	    // Refilter the table
 	    $('#min, #max').on('change', function () {
-	        table.draw();
+	    		if(isNaN(Date.parse($('#min').val()))) {
+	    			minDate.val(firstDay);
+	    			return false
+	    		}
+	    		if(isNaN(Date.parse($('#max').val()))) {
+	    			maxDate.val(lastDay);
+	    			return false
+	    		}
+	        table.ajax.reload();
 	    });
 
 	  let bal = document.getElementById('balance');

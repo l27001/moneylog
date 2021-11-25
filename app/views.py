@@ -1,6 +1,6 @@
 from flask import render_template, abort, request, redirect, url_for, g, session, flash, jsonify, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from random import randint
@@ -39,8 +39,19 @@ def index():
 @app.route('/log/get', methods=['POST'])
 @login_required
 def log_get():
-    logs_count = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).count()
-    logs = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
+    minDate = request.form.get('minDate', type=str)
+    maxDate = request.form.get('maxDate', type=str)
+    if(maxDate is None or minDate is None):
+        return {"status": "fail",
+            "description": "Neither minDate or maxDate provided"}, 400
+    try:
+        datetime.strptime(maxDate, "%Y-%m-%d")
+        datetime.strptime(minDate, "%Y-%m-%d")
+    except ValueError:
+        return {"status": "fail",
+            "description": "Invalid minDate or maxDate provided"}, 400
+    logs = models.MoneyLog.query.filter(and_(models.MoneyLog.user_id == g.user.id, models.MoneyLog.timestamp >= minDate, models.MoneyLog.timestamp <= maxDate)).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
+    dohod = 0; rashod = 0
     if(logs):
         logs_out = []
         groups = {}
@@ -50,9 +61,12 @@ def log_get():
         for log in logs:
             try: group = groups[log.group_id]
             except KeyError: group = "Неизвестно"
+            if(log.cost < 0): rashod += log.cost
+            else: dohod += log.cost
             logs_out.append([log.timestamp.strftime('%Y-%m-%d'), group, log.description, log.cost, log.id])
     else:
         logs_out = []
+    logs_out += [dohod, rashod]
     return jsonify(logs_out)
 
 @app.route('/logout')
