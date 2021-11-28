@@ -270,11 +270,10 @@ def profile_delete():
         db.session.delete(n)
     if(g.user.avatar):
         for n in ['s', 'm', 'l']:
-            a = g.user.avatar.split('_')
             try:
-                os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + a[0] + "_" + n + a[1][1:])
+                os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
             except FileNotFoundError:
-                pass
+                print(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
     user = models.User.query.filter(models.User.id == g.user.id).first()
     db.session.delete(user)
     db.session.commit()

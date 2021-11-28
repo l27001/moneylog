@@ -1,4 +1,4 @@
-from app import db
+from app import db, avatars
 import bcrypt
 from sqlalchemy.sql import func
 
@@ -30,7 +30,7 @@ class User(db.Model):
 
     def get_avatar_link(self, size="m"):
         if(self.avatar == None):
-            return "/static/img/user.png"
+            return f"/static/avatars/default_{size}.png"
         else:
             return f"/static/avatars/{self.avatar}{size}.png"
 

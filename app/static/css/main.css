@@ -1,7 +1,7 @@
 body {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #333;
-	background-color: #f7fff0;
+	/*background-color: #f7fff0;*/
   	margin-bottom: 60px; /* Margin bottom by footer height */
 }
 .navbar-brand {

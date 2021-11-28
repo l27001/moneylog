@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center mb-3">{% if user.is_authenticated == True %}Добро пожаловать, {{user.username}}, ваш баланс -
+<h2 class="text-center mb-3">Добро пожаловать, {{user.username}}, ваш баланс -
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
-	 {{user.currency}}{% else %}Вы не авторизованы{% endif %}</h2>
+	 {{user.currency}}</h2>
 <div class="row mb-3 col-lg-10 mx-auto">
   <div class="col-sm-6">
     <div class="card border-danger">
@@ -110,13 +110,8 @@
           },
           className: 'btn btn-info'
 	      }],
-	      // drawCallback: function( settings ) {
-        	// document.getElementById('id_dohod').innerHTML = dohod;
-	    		// document.getElementById('id_rashod').innerHTML = rashod;
-    		// }
 	 		});
 
-	    // Refilter the table
 	    $('#min, #max').on('change', function () {
 	    		if(isNaN(Date.parse($('#min').val()))) {
 	    			minDate.val(firstDay);
@@ -166,24 +161,24 @@
 		}
 		bal.addEventListener("click", input_show);
 
-	function delete_log(id) {
-		$.ajax({
-		    url: "{{url_for('log_del')}}",
-		    dataType: "json",
-			async: true,
-		    type: "POST",
-		    data: {id: id},
-		    success: function(data) {
-				if(data['status'] == "unauthorized") {
-			        location.reload();
-			  } else {
-	    	  table.ajax.reload();
-	    	  createMessage("Запись удалена", "success");
-	      }
-	   	}
-		});
-	}
-	let timerId = setInterval(table.ajax.reload, 120000);
+		function delete_log(id) {
+			$.ajax({
+			    url: "{{url_for('log_del')}}",
+			    dataType: "json",
+				async: true,
+			    type: "POST",
+			    data: {id: id},
+			    success: function(data) {
+					if(data['status'] == "unauthorized") {
+				        location.reload();
+				  } else {
+		    	  table.ajax.reload();
+		    	  createMessage("Запись удалена", "success");
+		      }
+		   	}
+			});
+		}
+		let timerId = setInterval(table.ajax.reload, 120000);
 </script>
 {% endblock %}
 {% block extramodals %}
