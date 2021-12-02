@@ -18,7 +18,7 @@ def unauthorized():
         flash("Необходимо авторизоваться", "warning")
         return redirect(url_for('auth'))
     else:
-        return {"status":"unauthorized", "description":"Необходимо авторизоваться"}
+        return {"status":"unauthorized", "description":"Необходимо авторизоваться"}, 401
 
 @lm.user_loader
 def load_user(user_id):
@@ -50,23 +50,15 @@ def log_get():
     except ValueError:
         return {"status": "fail",
             "description": "Invalid minDate or maxDate provided"}, 400
-    logs = models.MoneyLog.query.filter(and_(models.MoneyLog.user_id == g.user.id, models.MoneyLog.timestamp >= minDate, models.MoneyLog.timestamp <= maxDate)).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
+    logs = g.user.logs.filter(and_(models.MoneyLog.timestamp >= minDate, models.MoneyLog.timestamp <= maxDate)).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
     dohod = 0; rashod = 0
+    logs_out = []
     if(logs):
-        logs_out = []
-        groups = {}
-        for n in models.Group.query.all():
-            n = n.__dict__
-            groups.update({n['id']:n['name']})
         for log in logs:
-            try: group = groups[log.group_id]
-            except KeyError: group = "Неизвестно"
             if(log.cost < 0): rashod += log.cost
             else: dohod += log.cost
-            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), group, log.description, log.cost, log.id])
-    else:
-        logs_out = []
-    logs_out += [dohod, rashod]
+            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), log.group.name, log.description, log.cost, log.id])
+    logs_out += [rashod, dohod]
     return jsonify(logs_out)
 
 @app.route('/logout')
@@ -141,7 +133,7 @@ def log_add():
 @login_required
 def log_del():
     id_ = request.form.get('id')
-    d = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id, models.MoneyLog.id == id_).first_or_404()
+    d = g.user.logs.filter(models.MoneyLog.id == id_).first_or_404()
     if(d):
         db.session.delete(d)
         db.session.commit()
@@ -152,7 +144,7 @@ def log_del():
 @app.route('/log/edit/<int:id_>', methods=['GET' ,'POST'])
 @login_required
 def log_edit(id_):
-    item = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id, models.MoneyLog.id == id_).first_or_404()
+    item = g.user.logs.filter(models.MoneyLog.id == id_).first_or_404()
     form = forms.LogAdd()
     groups = [(n.id, n.name) for n in models.Group.query.all()]
     form.group.choices = groups
@@ -210,11 +202,7 @@ def avatar_crop():
         os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + session['avatar_'])
         session.pop('avatar_')
         if(g.user.avatar != None):
-            for n in ['s', 'm', 'l']:
-                try:
-                    os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
-                except FileNotFoundError:
-                    pass
+            g.user.delete_avatar()
         g.user.avatar = filenames[2].split('_')[0]+"_"
         db.session.commit()
         flash('Аватар обновлён' ,"success")
@@ -265,15 +253,8 @@ def profile_changepass():
 @app.route('/profile/delete')
 @login_required
 def profile_delete():
-    d = models.MoneyLog.query.filter(models.MoneyLog.user_id == g.user.id).all()
-    for n in d:
-        db.session.delete(n)
     if(g.user.avatar):
-        for n in ['s', 'm', 'l']:
-            try:
-                os.remove(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
-            except FileNotFoundError:
-                print(app.config['AVATARS_SAVE_PATH'] + "/" + g.user.avatar + n + ".png")
+        g.user.delete_avatar()
     user = models.User.query.filter(models.User.id == g.user.id).first()
     db.session.delete(user)
     db.session.commit()
