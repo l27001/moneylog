@@ -57,7 +57,7 @@
 			var lastDay = new Date(y, m + 1, 0);
 	    minDate.val(firstDay);
 	    maxDate.val(lastDay);
-	 
+	 		
 	    // DataTables initialisation
 		var table = $('#index_table').DataTable({
 		 	responsive: true,
@@ -81,8 +81,8 @@
 			    		json[i][3] = "<td><h4><span class=\"badge badge-"+c+"\">"+json[i][3]+" {{user.currency}}</span></h4></td>";
 			    		json[i][4] = "<td><a class=\"btn btn-outline-info mx-auto mb-2\" href=\"/log/edit/"+json[i][4]+"\">Изменить</a> <button onclick=\"document.getElementById('del_id').value="+json[i][4]+"\" class=\"btn btn-outline-danger mx-auto mb-2\" data-toggle=\"modal\" data-target=\"#delete_log\">Удалить</button></td>";
 			    	}
-			    		$('#id_dohod').html(json[json.length-2]);
-			    		$('#id_rashod').html(json[json.length-1]);
+			    		$('#id_dohod').html(json[json.length-1]);
+			    		$('#id_rashod').html(json[json.length-2]);
 			    		json.splice(json.length-2, 2);
 			      	return json;
 		    	}
@@ -111,6 +111,11 @@
           className: 'btn btn-info'
 	      }],
 	 		});
+
+	  	$.fn.dataTable.ext.errMode = 'throw';
+			table.on( 'error.dt', function ( e, settings, techNote, message ) {
+        createMessage('Не удалось получить данные из БД. Попробуйте обновить страницу.', 'danger' );
+    	} )
 
 	    $('#min, #max').on('change', function () {
 	    		if(isNaN(Date.parse($('#min').val()))) {
