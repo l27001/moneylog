@@ -1,6 +1,7 @@
 from app import db, app
 import bcrypt, os
 from sqlalchemy.sql import func
+from glob import glob
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -29,16 +30,17 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.checkpw(password.encode(), self.password.encode())
 
-    def get_avatar_link(self, size="m"):
+    def get_avatar_link(self, size = "m"):
         if(self.avatar == None):
             return f"/static/avatars/default_{size}.png"
         else:
             return f"/static/avatars/{self.avatar}{size}.png"
 
-    def delete_avatar(self):
-        for file in os.listdir(app.config['AVATARS_SAVE_PATH']):
-            if(file.startswith(self.avatar)):
-                os.remove(app.config['AVATARS_SAVE_PATH']+ '/' + file)
+    def delete_avatar(self, update = False):
+        for file in glob(app.config['AVATARS_SAVE_PATH'] + '/' + self.avatar + '*'):
+            os.remove(file)
+        if(update):
+            self.avatar = None
 
 class Group(db.Model):
     id = db.Column(db.SmallInteger, primary_key = True)

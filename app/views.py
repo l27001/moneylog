@@ -212,6 +212,15 @@ def avatar_crop():
         form = form,
         title = "Обрезать аватар")
 
+@app.route('/profile/avatar/delete', methods=['GET'])
+@login_required
+def avatar_delete():
+    if(g.user.avatar != None):
+        g.user.delete_avatar(True)
+        db.session.commit()
+        flash("Аватар успешно удалён", "success")
+    return redirect(url_for('profile'))
+
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
