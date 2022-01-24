@@ -1,0 +1,9 @@
+flask-migrate
+flask
+flask-sqlalchemy
+flask-avatars
+email_validator
+bcrypt
+MySQL
+flask-wtf
+waitress

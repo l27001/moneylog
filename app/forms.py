@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, TextField, BooleanField, PasswordField, SelectField, IntegerField, DateField, HiddenField
+from wtforms import StringField, StringField, BooleanField, PasswordField, SelectField, IntegerField, DateField, HiddenField
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
 from wtforms.widgets import TextArea
 from datetime import datetime
@@ -32,7 +32,7 @@ class RegisterForm(Form):
 class LogAdd(Form):
     cost = IntegerField('cost',
         validators = [DataRequired("Некорректное значение")])
-    description = TextField('description',
+    description = StringField('description',
         validators = [Length(0,128,"Максимальная длина пояснения 128 символов")],
         widget=TextArea())
     group = SelectField('group',
