@@ -44,22 +44,20 @@
 {% block extrajs %}
 <script>
 	var minDate, maxDate;
+
+	minDate = new DateTime($('#min'), {
+	    format: 'YYYY-MM-DD'
+	});
+	maxDate = new DateTime($('#max'), {
+	    format: 'YYYY-MM-DD'
+	});
+	var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+	var firstDay = new Date(y, m, 1);
+	var lastDay = new Date(y, m + 1, 0);
+	minDate.val(firstDay);
+	maxDate.val(lastDay);
 	 		
-		// Create date inputs
-	    minDate = new DateTime($('#min'), {
-	        format: 'YYYY-MM-DD'
-	    });
-	    maxDate = new DateTime($('#max'), {
-	        format: 'YYYY-MM-DD'
-	    });
-	    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-	    var firstDay = new Date(y, m, 1);
-			var lastDay = new Date(y, m + 1, 0);
-	    minDate.val(firstDay);
-	    maxDate.val(lastDay);
-	 		
-	    // DataTables initialisation
-		var table = $('#index_table').DataTable({
+	var table = $('#index_table').DataTable({
 		 	responsive: true,
 		 	ajax: {
 		 		url: "{{url_for('log_get')}}",
@@ -69,7 +67,10 @@
 		 			d.maxDate = $('#max').val();
 		 		},
 			 	dataSrc: function ( json ) {
-			    	for ( var i=0, ien=json.length-2 ; i<ien ; i++ ) {
+			 			$('#id_dohod').html(json[json.length-1]);
+			    	$('#id_rashod').html(json[json.length-2]);
+			    	json.splice(json.length-2, 2);
+			    	for ( var i=0, ien=json.length ; i<ien ; i++ ) {
 			    		if(json[i][2] == '') {
 			    			json[i][2] = '<i>Отсутствует</i>';
 			    		}
@@ -81,9 +82,6 @@
 			    		json[i][3] = "<td><h4><span class=\"badge badge-"+c+"\">"+json[i][3]+" {{user.currency}}</span></h4></td>";
 			    		json[i][4] = "<td><a class=\"btn btn-outline-info mx-auto mb-2\" href=\"/log/edit/"+json[i][4]+"\">Изменить</a> <button onclick=\"document.getElementById('del_id').value="+json[i][4]+"\" class=\"btn btn-outline-danger mx-auto mb-2\" data-toggle=\"modal\" data-target=\"#delete_log\">Удалить</button></td>";
 			    	}
-			    		$('#id_dohod').html(json[json.length-1]);
-			    		$('#id_rashod').html(json[json.length-2]);
-			    		json.splice(json.length-2, 2);
 			      	return json;
 		    	}
 		    },
