@@ -7,7 +7,8 @@
 	<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 	{% block extracss %}
 	{% endblock %}
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/datatables.min.css"/>
 	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 <body>
@@ -57,10 +58,9 @@
     </footer>
 	{% block extramodals %}{% endblock %}
 	<script src="/static/js/jquery-3.6.0.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/date-1.1.1/r-2.2.9/datatables.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/b-2.0.1/b-html5-2.0.1/b-print-2.0.1/date-1.1.1/r-2.2.9/datatables.min.css"/>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script> -->
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/static/js/datatables.min.js"></script>
 	<script>
 		var messages_list = document.getElementById('messages_list');
 		function createMessage(text, type) {
