@@ -20,10 +20,11 @@ class RegisterForm(Form):
             Regexp("^[A-Za-z_\-0-9]+$",0,"Логин может содержать только латинские буквы, цифры и символы - и _")])
     email = StringField('email',
         validators = [DataRequired("Необходимо заполнить все поля"),
-            Email("Введён некорректный email")])
+            Email("Введён некорректный email"),
+            Length(0,120,"Email должен содержать не более 120 символов")])
     password = PasswordField('password',
         validators = [DataRequired("Заполните все поля"),
-            Length(6,40,"Пароль должен содержать от 6 до 40 символов")])
+            Length(6,64,"Пароль должен содержать от 6 до 64 символов")])
     password2 = PasswordField('password2',
         validators = [DataRequired("Заполните все поля"),
             EqualTo("password", "Пароли должны совпадать")])
@@ -47,7 +48,7 @@ class ProfileChangepass(Form):
         validators = [DataRequired("Заполните все поля")],)
     new_password = PasswordField('new_password',
         validators = [DataRequired("Заполните все поля"),
-            Length(6,40,"Пароль должен содержать от 6 до 40 символов")])
+            Length(6,64,"Пароль должен содержать от 6 до 64 символов")])
     new_password2 = PasswordField('new_password2',
         validators = [DataRequired("Заполните все поля"),
             EqualTo("new_password", "Пароли должны совпадать")])
@@ -70,4 +71,5 @@ class ChangeEmail(Form):
 
     email = StringField('email',
         validators = [DataRequired("Необходимо заполнить все поля"),
-            Email("Введён некорректный email")])
+            Email("Введён некорректный email"),
+            Length(0,120,"Email должен содержать не более 120 символов")])

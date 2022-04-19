@@ -20,7 +20,7 @@
     <div class="form-group">
         <label for="password2">Повторите пароль:</label>
         {{ form.password2(class="form-control") }}
-        {% if form.password2.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{% endif %}
+        {% if form.password2.errors[0] %}<div class="alert alert-danger mt-2" role="alert">{{ form.password2.errors[0] }}</div>{% endif %}
         <input class="mr-1 mt-2" onchange="pw_change_visiblity('password');pw_change_visiblity('password2');" id="pw_visible" type="checkbox"><label for="pw_visible"> Показать пароль</label><br>
         <a href="{{url_for('auth')}}">Уже есть аккаунт?</a>
     </div>

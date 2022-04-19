@@ -39,7 +39,7 @@
 		    </div>
 	    </noscript>
 	    {% if user.is_anonymous == True and title != 'Вход' and title != 'Регистрация' %}
-	    <div class="alert alert-danger fade show" role="alert">
+	    <div class="alert alert-warning fade show" role="alert">
 		        <b>Вы авторизованы как гость. В этом режиме некоторые функции недоступны, а все записи могут быть просмотрены/отредактированы/удалены другими пользователями.<br>
 		        Рекомендуется <a class="alert-link" href="{{ url_for('auth') }}">Авторизоваться</a>, либо <a class="alert-link" href="{{ url_for('register') }}">Зарегистрироваться</a></b>
 		  </div>
