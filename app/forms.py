@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, StringField, BooleanField, PasswordField, SelectField, IntegerField, DateField, HiddenField
+from wtforms import StringField, BooleanField, PasswordField, SelectField, IntegerField, DateField, HiddenField
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, Email
 from wtforms.widgets import TextArea
-from datetime import datetime
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from app import app
 
@@ -41,7 +40,6 @@ class LogAdd(Form):
         default = False)
     date = DateField('date',
         format = '%Y-%m-%d',
-        # widget=DatePickerWidget(),
         validators = [DataRequired("Необходимо ввести корректное значение [yyyy-mm-dd]")])
 
 class ProfileChangepass(Form):

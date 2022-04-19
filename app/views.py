@@ -2,11 +2,9 @@ from flask import render_template, abort, request, redirect, url_for, g, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from sqlalchemy import or_, and_
 from datetime import datetime
-from werkzeug.utils import secure_filename
-from random import randint
 import os
 from app import app, forms, models, db, avatars
-from app.decorators import login_not_required
+from app.decorators import login_not_required, guest_not_allowed
 
 lm = LoginManager()
 lm.init_app(app)
@@ -14,7 +12,7 @@ lm.login_view = 'auth'
 
 @lm.unauthorized_handler
 def unauthorized():
-    if(request.method == "GET"):
+    if(request.method != "POST"):
         flash("Необходимо авторизоваться", "warning")
         return redirect(url_for('auth'))
     else:
@@ -22,7 +20,10 @@ def unauthorized():
 
 @lm.user_loader
 def load_user(user_id):
-    return models.User.query.filter_by(id=user_id).first()
+    res = models.User.query.filter_by(id=user_id).first()
+    if(res.id == 0):
+        res.is_anonymous = True
+    return res
 
 @app.before_request
 def before_request():
@@ -30,8 +31,11 @@ def before_request():
 
 @app.route('/')
 @app.route('/dashboard')
-@login_required
+#@login_required
 def index():
+    if(g.user is None or not g.user.is_authenticated):
+        login_user(load_user(0))
+        return redirect(url_for("index"))
     return render_template('index.html',
         title = "Главная",
         user = g.user)
@@ -43,26 +47,26 @@ def log_get():
     maxDate = request.form.get('maxDate', type=str)
     if(maxDate is None or minDate is None):
         return {"status": "fail",
-            "description": "Neither minDate or maxDate provided"}, 400
+            "description": "Neither minDate or maxDate provided", "data":None}
     try:
         datetime.strptime(maxDate, "%Y-%m-%d")
         datetime.strptime(minDate, "%Y-%m-%d")
     except ValueError:
         return {"status": "fail",
-            "description": "Invalid minDate or maxDate provided"}, 400
+            "description": "Invalid minDate or maxDate provided", "data":None}
     logs = g.user.logs.filter(and_(models.MoneyLog.timestamp >= minDate, models.MoneyLog.timestamp <= maxDate)).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
-    dohod = 0; rashod = 0
-    logs_out = []
+    income = 0; expense = 0
+    res = {"logs":[], "expense":0, "income":0}
     if(logs):
         for log in logs:
-            if(log.cost < 0): rashod += log.cost
-            else: dohod += log.cost
-            logs_out.append([log.timestamp.strftime('%Y-%m-%d'), log.group.name, log.description, log.cost, log.id])
-    logs_out += [rashod, dohod]
-    return jsonify(logs_out)
+            if(log.cost < 0): res['expense'] += log.cost
+            else: res['income'] += log.cost
+            res['logs'].append([log.timestamp.strftime('%Y-%m-%d'), log.group.name, log.description, log.cost, log.id])
+    return jsonify({"status":"success", "data":res})
 
 @app.route('/logout')
 @login_required
+@guest_not_allowed
 def logout():
     logout_user()
     flash("Вы успешно вышли", "success")
@@ -74,7 +78,7 @@ def auth():
     form = forms.LoginForm()
     if(form.validate_on_submit() == True):
         cur_user = models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.username.data)).first()
-        if(cur_user and cur_user.check_password(form.password.data) == True):
+        if(cur_user and cur_user.id > 0 and cur_user.check_password(form.password.data) == True):
             login_user(load_user(cur_user.id), remember=form.remember_me.data)
             flash("Вы успешно авторизовались", "success")
             return redirect(url_for('index'))
@@ -90,8 +94,10 @@ def auth():
 def register():
     form = forms.RegisterForm()
     if(form.validate_on_submit() == True):
-        if(models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.email.data)).first() is not None):
-            flash("Пользователь с таким именем или email уже зарегистрирован", "danger")
+        if(models.User.query.filter(models.User.username == form.username.data).first() is not None):
+            flash("Пользователь с таким логином уже зарегистрирован", "danger")
+        elif(models.User.query.filter(models.User.email == form.email.data).first() is not None):
+            flash("Пользователь с таким email уже зарегистрирован", "danger")
         else:
             user = models.User(username = form.username.data, email = form.email.data)
             user.set_password(form.password.data)
@@ -167,6 +173,7 @@ def log_edit(id_):
 
 @app.route('/profile/avatar/<path:filename>')
 @login_required
+@guest_not_allowed
 def get_avatar(filename):
     # используется только для обрезки аватара
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
@@ -189,6 +196,7 @@ def user_balance_edit():
 
 @app.route('/profile/avatar/crop', methods=['GET', 'POST'])
 @login_required
+@guest_not_allowed
 def avatar_crop():
     form = forms.CropAvatarForm()
     if(session.get('avatar_') is None):
@@ -214,6 +222,7 @@ def avatar_crop():
 
 @app.route('/profile/avatar/delete', methods=['GET'])
 @login_required
+@guest_not_allowed
 def avatar_delete():
     if(g.user.avatar != None):
         g.user.delete_avatar(True)
@@ -243,6 +252,7 @@ def profile():
 
 @app.route('/profile/changepass', methods=['GET', 'POST'])
 @login_required
+@guest_not_allowed
 def profile_changepass():
     form = forms.ProfileChangepass()
     if(form.validate_on_submit() == True):
@@ -261,6 +271,7 @@ def profile_changepass():
 
 @app.route('/profile/delete')
 @login_required
+@guest_not_allowed
 def profile_delete():
     if(g.user.avatar):
         g.user.delete_avatar()
@@ -286,6 +297,7 @@ def change_currency():
 
 @app.route('/profile/email/change', methods=['POST'])
 @login_required
+@guest_not_allowed
 def change_email():
     form = forms.ChangeEmail()
     if(form.validate_on_submit() != True):

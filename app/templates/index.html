@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center mb-3">Добро пожаловать, {{user.username}}, ваш баланс -
+<h2 class="text-center mb-3">Добро пожаловать, {{user.username}}, ваш бюджет составляет
 	<a href="#" id="balance">{{user.balance}}</a>
 	<input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
 	 {{user.currency}}</h2>
@@ -9,7 +9,7 @@
     <div class="card border-danger">
       <div class="card-body">
         <h5 class="card-title">Расходы за выбранный период</h5>
-        <p class="card-text h2 text-danger"><span id="id_rashod">0</span> {{user.currency}}</p>
+        <p class="card-text h2 text-danger"><span id="id_expense">0</span> {{user.currency}}</p>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
     <div class="card border-success">
       <div class="card-body">
         <h5 class="card-title">Доходы за выбранный период</h5>
-        <p class="card-text h2 text-success"><span id="id_dohod">0</span> {{user.currency}}</p>
+        <p class="card-text h2 text-success"><span id="id_income">0</span> {{user.currency}}</p>
       </div>
     </div>
   </div>
@@ -67,9 +67,13 @@
 		 			d.maxDate = $('#max').val();
 		 		},
 			 	dataSrc: function ( json ) {
-			 			$('#id_dohod').html(json[json.length-1]);
-			    	$('#id_rashod').html(json[json.length-2]);
-			    	json.splice(json.length-2, 2);
+			 			if (json['status'] != 'success') {
+			 				createMessage("При получении данных произошла ошибка: "+json['description'], "danger");
+			 				return 0;
+			 			}
+			 			$('#id_income').html(json['data']['income']);
+			    	$('#id_expense').html(json['data']['expense']);
+			 			json = json['data']['logs'];
 			    	for ( var i=0, ien=json.length ; i<ien ; i++ ) {
 			    		if(json[i][2] == '') {
 			    			json[i][2] = '<i>Отсутствует</i>';

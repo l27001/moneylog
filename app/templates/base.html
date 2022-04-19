@@ -15,7 +15,7 @@
 	<nav class="navbar navbar-expand navbar-dark bg-dark">
 		<span class="navbar-brand mb-0 h1"><span style="color: green;">Money</span>Log</span>
 		<div class="navbar-nav align-items-center">
-			{% if user.is_authenticated == False %}
+			{% if user.is_authenticated == False or user.is_anonymous == True %}
 			<a class="nav-item nav-link {% if title == "Вход" %} active{% endif %}" href="{{ url_for('auth') }}">Вход</a>
 			<a class="nav-item nav-link{% if title == "Регистрация" %} active{% endif %}" href="{{ url_for('register') }}">Регистрация</a>
 			{% endif %}
@@ -24,7 +24,9 @@
 		</div>
 		<div class="navbar-nav col-auto ml-auto align-items-center">
 			<a class="nav-item nav-link{% if title == 'Профиль' %} active{% endif%}" href="{{url_for('profile')}}"><img class="img-fluid rounded-circle mr-2" src="{{user.get_avatar_link('s')}}">{{ user.username }}</a>
+			{% if user.is_anonymous == False %}
 			<a class="nav-item nav-link" href="{{ url_for('logout') }}">Выход</a>
+			{% endif %}
 			{% endif %}
 		</div>
 	</nav>
@@ -36,6 +38,12 @@
 		        <b>Для работы сайта требуется JavaScript</b>
 		    </div>
 	    </noscript>
+	    {% if user.is_anonymous == True and title != 'Вход' and title != 'Регистрация' %}
+	    <div class="alert alert-danger fade show" role="alert">
+		        <b>Вы авторизованы как гость. В этом режиме некоторые функции недоступны, а все записи могут быть просмотрены/отредактированы/удалены другими пользователями.<br>
+		        Рекомендуется <a class="alert-link" href="{{ url_for('auth') }}">Авторизоваться</a>, либо <a class="alert-link" href="{{ url_for('register') }}">Зарегистрироваться</a></b>
+		  </div>
+		  {% endif %}
 	    {% if messages %}
 	        {% for category, message in messages %}
 	        	<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
@@ -48,7 +56,7 @@
 	    {% endif %}
 	    </div>
 	{% endwith %}
-	<div class="container col-lg-9">
+	<div class="container col-lg-9 pb-1">
 	{% block content %}{% endblock %}
 	</div>
 	<footer class="footer pt-1">
