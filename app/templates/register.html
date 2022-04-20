@@ -25,7 +25,7 @@
         <a href="{{url_for('auth')}}">Уже есть аккаунт?</a>
     </div>
     <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
-    <a href="{{url_for('index')}}" class="btn btn-secondary mx-auto">Войти как Гость</a>
+    <a href="{{url_for('auth')}}?guest=1" class="btn btn-secondary mx-auto">Войти как Гость</a>
 </form> 
 {% endblock %}
 {% block extrajs %}

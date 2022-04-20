@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <h2 class="text-center mb-3">Добро пожаловать, {{user.username}}, ваш бюджет составляет
-	<a href="#" id="balance">{{user.balance}}</a>
-	<input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
-	 {{user.currency}}</h2>
+  <a href="#" id="balance">{{user.balance}}</a>
+  <input class="col-2" id="input_balance" width="50px" hidden value="{{user.balance}}">
+   {{user.currency}}</h2>
 <div class="row mb-3 col-lg-10 mx-auto">
   <div class="col-sm-6">
     <div class="card border-danger">
@@ -24,168 +24,170 @@
 </div>
 <div class="mx-auto text-center">
 
-	<div class="col-6 mx-auto mb-5">
-		<h4>Период сортировки</h4>
-		<div class="form-row"><div class="col">От: <input class="form-control" type="text" id="min" name="min"></div> <div class="col">До: <input class="form-control" type="text" id="max" name="max"></div></div>
-	</div>
+  <div class="col-6 mx-auto mb-5">
+    <h4>Период сортировки</h4>
+    <div class="form-row"><div class="col">От: <input class="form-control" type="text" id="min" name="min"></div> <div class="col">До: <input class="form-control" type="text" id="max" name="max"></div></div>
+  </div>
 </div>
-	<table id="index_table" class="table table-striped table-bordered text-center">
-		<thead>
-			<tr>
-				<th width="180px">Дата</th>
-				<th width="180px">Группа</th>
-				<th>Пояснение</th>
-				<th width="200px">Сумма</th>
-				<th width="180px">Действия</th>
-			</tr>
-		</thead>
-	</table>
+  <table id="index_table" class="table table-striped table-bordered text-center">
+    <thead>
+      <tr>
+        <th width="180px">Дата</th>
+        <th width="180px">Группа</th>
+        <th>Пояснение</th>
+        <th width="200px">Сумма</th>
+        <th width="180px">Действия</th>
+      </tr>
+    </thead>
+  </table>
 {% endblock %}
 {% block extrajs %}
 <script>
-	var minDate, maxDate;
+  var minDate, maxDate;
 
-	minDate = new DateTime($('#min'), {
-	    format: 'YYYY-MM-DD'
-	});
-	maxDate = new DateTime($('#max'), {
-	    format: 'YYYY-MM-DD'
-	});
-	var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-	var firstDay = new Date(y, m, 1);
-	var lastDay = new Date(y, m + 1, 0);
-	minDate.val(firstDay);
-	maxDate.val(lastDay);
-	 		
-	var table = $('#index_table').DataTable({
-		 	responsive: true,
-		 	ajax: {
-		 		url: "{{url_for('log_get')}}",
-		 		type: "POST",
-		 		data: function (d) {
-		 			d.minDate = $('#min').val();
-		 			d.maxDate = $('#max').val();
-		 		},
-			 	dataSrc: function ( json ) {
-			 			if (json['status'] != 'success') {
-			 				createMessage("При получении данных произошла ошибка: "+json['description'], "danger");
-			 				return 0;
-			 			}
-			 			$('#id_income').html(json['data']['income']);
-			    	$('#id_expense').html(json['data']['expense']);
-			 			json = json['data']['logs'];
-			    	for ( var i=0, ien=json.length ; i<ien ; i++ ) {
-			    		if(json[i][2] == '') {
-			    			json[i][2] = '<i>Отсутствует</i>';
-			    		}
-			    		if(json[i][3] < 0) {
-			    			var c = "danger";
-			    		} else {
-			    			var c = "success";
-			    		}
-			    		json[i][3] = "<td><h4><span class=\"badge badge-"+c+"\">"+json[i][3]+" {{user.currency}}</span></h4></td>";
-			    		json[i][4] = "<td><a class=\"btn btn-outline-info mx-auto mb-2\" href=\"/log/edit/"+json[i][4]+"\">Изменить</a> <button onclick=\"document.getElementById('del_id').value="+json[i][4]+"\" class=\"btn btn-outline-danger mx-auto mb-2\" data-toggle=\"modal\" data-target=\"#delete_log\">Удалить</button></td>";
-			    	}
-			      	return json;
-		    	}
-		    },
-		    columnDefs: [
-			    { orderable: false, targets: [2,4] }
-			],
-			autoWidth: true,
-			order: [[0, "desc"]],
-	 		oLanguage: { "sUrl": "/static/js/datatable/ru.json" },
-	 		dom: "<'row'<'col-sm-12 col-md-4 mt-1'l><'col-sm-auto mx-auto col-md-4 text-center'B><'col-sm-12 col-md-4 mt-1'f>>" +
-			"<'row'<'col-sm-12'tr>>" +
-			"<'row mb-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-	 		buttons: [{
-	        text: 'Добавить',
-	        action: function (e, dt, node, config ) {
-	        	location.href = '{{url_for("log_add")}}';
-	        },
-	        className: 'btn btn-success'
-	      },
-	      {
+  minDate = new DateTime($('#min'), {
+      format: 'YYYY-MM-DD'
+  });
+  maxDate = new DateTime($('#max'), {
+      format: 'YYYY-MM-DD'
+  });
+  var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+  var firstDay = new Date(y, m, 1);
+  var lastDay = new Date(y, m + 1, 0);
+  minDate.val(firstDay);
+  maxDate.val(lastDay);
+      
+  var table = $('#index_table').DataTable({
+      responsive: true,
+      ajax: {
+        url: "{{url_for('log_get')}}",
+        type: "POST",
+        data: function (d) {
+          d.minDate = $('#min').val();
+          d.maxDate = $('#max').val();
+        },
+        dataSrc: function ( json ) {
+            if (json['status'] != 'success') {
+              createMessage("При получении данных произошла ошибка: "+json['description'], "danger");
+              return 0;
+            }
+            $('#id_income').html(json['data']['income']);
+            $('#id_expense').html(json['data']['expense']);
+            $('#balance').html(json['data']['balance']);
+            $('#input_balance').val(json['data']['balance']);
+            json = json['data']['logs'];
+            for ( var i=0, ien=json.length ; i<ien ; i++ ) {
+              if(json[i][2] == '') {
+                json[i][2] = '<i>Отсутствует</i>';
+              }
+              if(json[i][3] < 0) {
+                var c = "danger";
+              } else {
+                var c = "success";
+              }
+              json[i][3] = "<td><h4><span class=\"badge badge-"+c+"\">"+json[i][3]+" {{user.currency}}</span></h4></td>";
+              json[i][4] = "<td><a class=\"btn btn-outline-info mx-auto mb-2\" href=\"/log/edit/"+json[i][4]+"\">Изменить</a> <button onclick=\"document.getElementById('del_id').value="+json[i][4]+"\" class=\"btn btn-outline-danger mx-auto mb-2\" data-toggle=\"modal\" data-target=\"#delete_log\">Удалить</button></td>";
+            }
+              return json;
+          }
+        },
+        columnDefs: [
+          { orderable: false, targets: [2,4] }
+      ],
+      autoWidth: true,
+      order: [[0, "desc"]],
+      oLanguage: { "sUrl": "/static/js/datatable/ru.json" },
+      dom: "<'row'<'col-sm-12 col-md-4 mt-1'l><'col-sm-auto mx-auto col-md-4 text-center'B><'col-sm-12 col-md-4 mt-1'f>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row mb-3'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      buttons: [{
+          text: 'Добавить',
+          action: function (e, dt, node, config ) {
+            location.href = '{{url_for("log_add")}}';
+          },
+          className: 'btn btn-success'
+        },
+        {
           text: 'Обновить',
           action: function ( e, dt, node, config ) {
             table.ajax.reload();
           },
           className: 'btn btn-info'
-	      }],
-	 		});
+        }],
+      });
 
-	  	$.fn.dataTable.ext.errMode = 'throw';
-			table.on( 'error.dt', function ( e, settings, techNote, message ) {
+      $.fn.dataTable.ext.errMode = 'throw';
+      table.on( 'error.dt', function ( e, settings, techNote, message ) {
         createMessage('Не удалось получить данные из БД. Попробуйте обновить страницу.', 'danger' );
-    	} )
+      } )
 
-	    $('#min, #max').on('change', function () {
-	    		if(isNaN(Date.parse($('#min').val()))) {
-	    			minDate.val(firstDay);
-	    			return false
-	    		}
-	    		if(isNaN(Date.parse($('#max').val()))) {
-	    			maxDate.val(lastDay);
-	    			return false
-	    		}
-	        table.ajax.reload();
-	    });
+      $('#min, #max').on('change', function () {
+          if(isNaN(Date.parse($('#min').val()))) {
+            minDate.val(firstDay);
+            return false
+          }
+          if(isNaN(Date.parse($('#max').val()))) {
+            maxDate.val(lastDay);
+            return false
+          }
+          table.ajax.reload();
+      });
 
-	  let bal = document.getElementById('balance');
-		let bal_input = document.getElementById('input_balance');
-		function input_hide() {
-			let balance = Number(bal_input.value);
-			if(bal.innerHTML != balance && !isNaN(balance) && balance >= 0) {
-				$.ajax({
-			    	url: "{{url_for('user_balance_edit')}}",
-			    	dataType: "json",
-			    	async: true,
-			    	type: "POST",
-			    	data: {balance: balance},
-			    	success: function(data) {
-			    	    if(data['status'] == "success") {
-			    	        bal.innerHTML = balance;
-			    	        table.ajax.reload();
-			    	    } else if(data['status'] == "fail") {
-			    	        bal_input.value = bal.innerHTML;
-			    	    } else if(data['status'] == "unauthorized") {
-			    	        location.reload();
-			    	    }
-			    	}
-				});
-			} else {
-				bal_input.value = bal.innerHTML;
-			}
-			bal.hidden = false;
-			bal_input.hidden = true;
-			bal_input.blur();
-		}
-		function input_show() {
-			bal.hidden = true;
-			bal_input.hidden = false;
-			bal_input.focus();
-			bal_input.addEventListener("blur", input_hide, once=true);
-		}
-		bal.addEventListener("click", input_show);
+    let bal = document.getElementById('balance');
+    let bal_input = document.getElementById('input_balance');
+    function input_hide() {
+      let balance = Number(bal_input.value);
+      if(bal.innerHTML != balance && Number.isInteger(balance) && balance >= 0) {
+        $.ajax({
+            url: "{{url_for('user_balance_edit')}}",
+            dataType: "json",
+            async: true,
+            type: "POST",
+            data: {balance: balance},
+            success: function(data) {
+                if(data['status'] == "success") {
+                    bal.innerHTML = balance;
+                    table.ajax.reload();
+                } else if(data['status'] == "fail") {
+                    bal_input.value = bal.innerHTML;
+                } else if(data['status'] == "unauthorized") {
+                    location.reload();
+                }
+            }
+        });
+      } else {
+        bal_input.value = bal.innerHTML;
+      }
+      bal.hidden = false;
+      bal_input.hidden = true;
+      bal_input.blur();
+    }
+    function input_show() {
+      bal.hidden = true;
+      bal_input.hidden = false;
+      bal_input.focus();
+      bal_input.addEventListener("blur", input_hide, once=true);
+    }
+    bal.addEventListener("click", input_show);
 
-		function delete_log(id) {
-			$.ajax({
-			    url: "{{url_for('log_del')}}",
-			    dataType: "json",
-				async: true,
-			    type: "POST",
-			    data: {id: id},
-			    success: function(data) {
-					if(data['status'] == "unauthorized") {
-				        location.reload();
-				  } else {
-		    	  table.ajax.reload();
-		    	  createMessage("Запись удалена", "success");
-		      }
-		   	}
-			});
-		}
-		let timerId = setInterval(table.ajax.reload, 120000);
+    function delete_log(id) {
+      $.ajax({
+          url: "{{url_for('log_del')}}",
+          dataType: "json",
+        async: true,
+          type: "POST",
+          data: {id: id},
+          success: function(data) {
+          if(data['status'] == "unauthorized") {
+                location.reload();
+          } else {
+            table.ajax.reload();
+            createMessage("Запись удалена", "success");
+          }
+        }
+      });
+    }
+    let timerId = setInterval(table.ajax.reload, 120000);
 </script>
 {% endblock %}
 {% block extramodals %}

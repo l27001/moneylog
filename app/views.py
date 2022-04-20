@@ -31,11 +31,8 @@ def before_request():
 
 @app.route('/')
 @app.route('/dashboard')
-#@login_required
+@login_required
 def index():
-    if(g.user is None or not g.user.is_authenticated):
-        login_user(load_user(0))
-        return redirect(url_for("index"))
     return render_template('index.html',
         title = "Главная",
         user = g.user)
@@ -56,7 +53,7 @@ def log_get():
             "description": "Invalid minDate or maxDate provided", "data":None}
     logs = g.user.logs.filter(and_(models.MoneyLog.timestamp >= minDate, models.MoneyLog.timestamp <= maxDate)).order_by(models.MoneyLog.timestamp.desc(), models.MoneyLog.id.desc()).all()
     income = 0; expense = 0
-    res = {"logs":[], "expense":0, "income":0}
+    res = {"logs":[], "expense":0, "income":0, "balance":g.user.balance}
     if(logs):
         for log in logs:
             if(log.cost < 0): res['expense'] += log.cost
@@ -75,12 +72,17 @@ def logout():
 @app.route('/auth', methods=['GET', 'POST'])
 @login_not_required
 def auth():
+    guest = request.args.get('guest', default=0, type=bool)
+    if(guest == True):
+        login_user(load_user(0))
+        flash("Вы успешно авторизовались как Гость", "success")
+        return redirect(url_for("index"))
     form = forms.LoginForm()
     if(form.validate_on_submit() == True):
         cur_user = models.User.query.filter(or_(models.User.username == form.username.data, models.User.email == form.username.data)).first()
         if(cur_user and cur_user.id > 0 and cur_user.check_password(form.password.data) == True):
             login_user(load_user(cur_user.id), remember=form.remember_me.data)
-            flash("Вы успешно авторизовались", "success")
+            flash(f"Вы успешно авторизовались как {cur_user.username}", "success")
             return redirect(url_for('index'))
         else:
             flash("Неверный логин или пароль", "danger")
@@ -188,6 +190,8 @@ def user_balance_edit():
     if(balance < 0):
         return {"status": "fail", "description": "Сумма не может быть меньше 0"}, 200
     old_balance = g.user.balance
+    if(balance-old_balance == 0):
+        return {"status": "success"}, 200
     g.user.balance = balance
     add = models.MoneyLog(group_id = 0, user_id = g.user.id, cost = balance-old_balance, description = "Изменение баланса")
     db.session.add(add)
