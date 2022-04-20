@@ -1,4 +1,5 @@
 flask-migrate
+flask_login
 flask
 flask-sqlalchemy
 flask-avatars
