@@ -11,6 +11,17 @@
 ```
 git clone https://git.ezdomain.ru/l27001/moneylog
 cd moneylog
+```
+Создаём виртуальное окружение (*venv*) и входим в него:
+```
+pip install virtualenv
+python -m venv env
+source env/bin/activate
+```
+(Для выхода из *venv* после всех манипуляций используйте команду `deactivate`)
+
+Устанавливаем необходимые модули:
+```
 pip install -r requirements.txt
 ```
 Открываем `config.py` любым текстовым редактором и меняем `SECRET_KEY` на произвольную строку (желательно > 32 символа).
