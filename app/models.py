@@ -42,17 +42,17 @@ class User(db.Model):
         if(update):
             self.avatar = None
 
-class Group(db.Model):
-    id = db.Column(db.SmallInteger, primary_key = True)
-    name = db.Column(db.String(128), nullable = False)
-    logs = db.relationship('MoneyLog', backref = db.backref('group', lazy='select'), uselist=False)
+# class Group(db.Model):
+#     id = db.Column(db.SmallInteger, primary_key = True)
+#     name = db.Column(db.String(128), nullable = False)
+#     logs = db.relationship('MoneyLog', backref = db.backref('group', lazy='select'), uselist=False)
 
-    def __repr__(self):
-        return '<Group %r>' % (self.name)
+#     def __repr__(self):
+#         return '<Group %r>' % (self.name)
 
 class MoneyLog(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    group_id = db.Column(db.SmallInteger, db.ForeignKey('group.id'), index = True, nullable = False)
+    group_id = db.Column(db.SmallInteger, index = True, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index = True, nullable = False)
     cost = db.Column(db.BigInteger, nullable = False)
     timestamp = db.Column(db.Date(), index = True, default=func.now(), nullable = False)

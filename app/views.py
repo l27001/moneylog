@@ -58,7 +58,7 @@ def log_get():
         for log in logs:
             if(log.cost < 0): res['expense'] += log.cost
             else: res['income'] += log.cost
-            res['logs'].append([log.timestamp.strftime('%Y-%m-%d'), log.group.name, log.description, log.cost, log.id])
+            res['logs'].append([log.timestamp.strftime('%Y-%m-%d'), app.config['GROUPS'][log.group_id], log.description, log.cost, log.id])
     return jsonify({"status":"success", "data":res})
 
 @app.route('/logout')
@@ -116,8 +116,7 @@ def register():
 @login_required
 def log_add():
     form = forms.LogAdd()
-    groups = [(n.id, n.name) for n in models.Group.query.all()]
-    form.group.choices = groups
+    form.group.choices = [(id_, val) for id_, val in app.config['GROUPS'].items()]
     if(form.validate_on_submit() == True):
         add = models.MoneyLog(cost = form.cost.data,
             description = form.description.data,
@@ -154,8 +153,7 @@ def log_del():
 def log_edit(id_):
     item = g.user.logs.filter(models.MoneyLog.id == id_).first_or_404()
     form = forms.LogAdd()
-    groups = [(n.id, n.name) for n in models.Group.query.all()]
-    form.group.choices = groups
+    form.group.choices = [(id_, val) for id_, val in app.config['GROUPS'].items()]
     if(form.validate_on_submit() == True):
         item.group_id = form.group.data
         item.cost = form.cost.data
