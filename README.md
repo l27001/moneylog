@@ -8,7 +8,8 @@
 
 ## Установка
 Копируем репозиторий и устанавливаем необходимые модули:
-```git clone https://git.ezdomain.ru/l27001/moneylog
+```
+git clone https://git.ezdomain.ru/l27001/moneylog
 cd moneylog
 pip install -r requirements.txt
 ```
@@ -21,7 +22,8 @@ SECRET_KEY = 'rPY@OaVaxjCQiA+hwXeo7-I-LqZPkZZZ'
 SQLALCHEMY_DATABASE_URI = 'mysql://MyCoolUsername:myCoolPassword@localhost/myCoolDatabase'
 ```
 Так-же обратите внимание на строки
-```REMEMBER_COOKIE_SECURE = True
+```
+REMEMBER_COOKIE_SECURE = True
 REMEMBER_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 ```
