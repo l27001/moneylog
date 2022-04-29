@@ -9,3 +9,6 @@ python_bcrypt==0.3.2
 SQLAlchemy==1.4.35
 waitress==2.1.1
 WTForms==3.0.1
+email-validator==1.2.0
+mysqlclient==2.1.0
+
